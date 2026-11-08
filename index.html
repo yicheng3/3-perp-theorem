@@ -1,0 +1,3280 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三垂線定理</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- KaTeX 數學公式排版引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <!-- 台灣高職教學標準字型庫 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+      touch-action: manipulation;
+    }
+    .math-serif {
+      font-family: 'Noto Serif TC', Cambria, 'Times New Roman', serif;
+    }
+    .hud-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- 頂部大分頁導航列 (端莊教育風格，無刺眼霓虹與漸層) -->
+    <!-- 頂部大分頁導航列 -->
+  <header class="h-16 px-6 bg-white border-b border-slate-200 flex items-center justify-between shrink-0 shadow-xs z-30">
+    <div class="flex items-center gap-3">
+      <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+        三垂線定理
+      </h1>
+    </div>
+
+    <!-- 5 大課堂教學流程分頁 -->
+    <nav class="flex items-center gap-1">
+      <button id="tabBtn1" onclick="switchTab(1)" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-bold transition bg-blue-700 text-white shadow-xs">
+        前導：空間透視
+      </button>
+      <button id="tabBtn2" onclick="switchTab(2)" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        0. 猜測這兩條線有垂直嗎
+      </button>
+      <button id="tabBtn3" onclick="switchTab(3)" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        1. 三垂線定理敘述
+      </button>
+      <button id="tabBtn4" onclick="switchTab(4)" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        2. 練習證明
+      </button>
+      <button id="tabBtn5" onclick="switchTab(5)" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        3. 距離計算
+      </button>
+    </nav>
+
+    <!-- 右上角功能與視角控制列 -->
+    <div class="flex items-center gap-2">
+      <a href="三垂線定理-公開觀課學生學習單.html" target="_blank" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-xs flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span>學生學習單 (B4)</span>
+      </a>
+      <button onclick="resetCameraAngle('TR')" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-xs">
+        俯視角度
+      </button>
+      <button onclick="resetCameraAngle('TL')" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-xs">
+        側視角度
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= 主內容區域 ================= -->
+  <main class="flex-1 relative overflow-hidden flex">
+
+    <!-- ================= TAB 1: 前導：空間透視 ================= -->
+    <div id="tabContent1" class="w-full h-full flex flex-col relative bg-slate-50 overflow-hidden select-none">
+      <canvas id="canvasTab1" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+
+      <!-- 頂部提示卡 -->
+      <div class="absolute top-4 left-6 pointer-events-none bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm flex items-center gap-2">
+        <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>提示：按住滑鼠左鍵或觸控拖曳可 360° 旋轉立體圖形，細察空間中的線面關係。</span>
+      </div>
+
+      <!-- 課堂引導猜想浮動卡 (點擊標記待觀察直線時顯示) -->
+      <div id="tab1GuessCard" class="hidden absolute top-16 left-1/2 -translate-x-1/2 z-20 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-xl border border-slate-200 shadow-md flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-800">
+        <span>課堂提問：圖中<b>空間斜線（紅線）</b>與<b>底邊直線（紫線）</b>在空間中是否互相垂直？請旋轉角度細察。</span>
+      </div>
+
+      <!-- 底部形狀與觀察按鈕列 -->
+      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-wrap items-center justify-center gap-3 w-[95%] max-w-4xl pointer-events-none">
+        <div class="pointer-events-auto bg-white p-1.5 rounded-md border border-slate-300 flex items-center gap-1.5 shadow-xs">
+          <button onclick="setTab1Shape('regularCube')" id="shapeBtn_regularCube" class="t1-shape-btn px-3.5 py-1.5 rounded-md text-xs font-bold bg-slate-800 text-white shadow-xs">
+            正方體
+          </button>
+          <button onclick="setTab1Shape('cube')" id="shapeBtn_cube" class="t1-shape-btn px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:bg-slate-100">
+            長方體
+          </button>
+          <button onclick="setTab1Shape('prism')" id="shapeBtn_prism" class="t1-shape-btn px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:bg-slate-100">
+            直角三稜柱
+          </button>
+          <button onclick="setTab1Shape('pyramid')" id="shapeBtn_pyramid" class="t1-shape-btn px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:bg-slate-100">
+            四角錐
+          </button>
+        </div>
+
+        <!-- 觀察標記直線開關 -->
+        <div class="pointer-events-auto bg-white p-1.5 rounded-md border border-slate-300 flex items-center shadow-xs">
+          <button id="btnTab1RevealTTP" onclick="toggleTab1TTP()" class="px-4 py-1.5 rounded-md text-xs sm:text-sm font-bold bg-blue-700 text-white shadow-xs transition hover:bg-blue-800">
+            <span>標記待觀察直線</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 2: 0. 猜測這兩條線有垂直嗎 ================= -->
+    <div id="tabContent2" class="w-full h-full hidden flex flex-col lg:flex-row relative bg-white">
+      
+      <!-- 左側 52%：乾淨無遮擋的 3D 空間模型 Canvas -->
+      <div class="w-full lg:w-[52%] h-1/2 lg:h-full relative border-r border-slate-200 bg-slate-50 flex flex-col">
+        <canvas id="canvasGuess" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+        
+        <!-- 左上角視角操作提示 (極簡低調) -->
+        <div class="absolute top-3 left-4 pointer-events-none bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 shadow-2xs flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+          <span>拖曳可 360° 旋轉視角</span>
+        </div>
+
+        <!-- 左下角快捷視角還原 -->
+        <div class="absolute bottom-3 left-4 pointer-events-auto flex items-center gap-2">
+          <button onclick="resetCameraAngle('TR')" class="px-2.5 py-1 rounded-md bg-white border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50 shadow-2xs">
+            重設視角
+          </button>
+        </div>
+      </div>
+
+      <!-- 右側 48%：題型選單、課堂提問、猜測按鈕與嚴謹證明解析 -->
+      <div class="w-full lg:w-[48%] h-1/2 lg:h-full overflow-y-auto p-5 lg:p-6 flex flex-col gap-4 bg-white">
+        
+        <!-- 頂部形狀分類切換鈕 (簡潔實用，無AI感) -->
+        <div class="flex items-center gap-1.5 flex-wrap border-b border-slate-200 pb-2.5">
+          <button onclick="setGuessCategory('all')" id="guessCatBtn_all" class="guess-cat-btn px-2.5 py-1 rounded-md text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+            全部 (11)
+          </button>
+          <button onclick="setGuessCategory('regularCube')" id="guessCatBtn_regularCube" class="guess-cat-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-800 text-white border border-slate-800 shadow-xs transition">
+            正方體 (3)
+          </button>
+          <button onclick="setGuessCategory('cube')" id="guessCatBtn_cube" class="guess-cat-btn px-2.5 py-1 rounded-md text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+            長方體 (2)
+          </button>
+          <button onclick="setGuessCategory('prism')" id="guessCatBtn_prism" class="guess-cat-btn px-2.5 py-1 rounded-md text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+            直角三稜柱 (2)
+          </button>
+          <button onclick="setGuessCategory('pyramid')" id="guessCatBtn_pyramid" class="guess-cat-btn px-2.5 py-1 rounded-md text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+            四角錐 (2)
+          </button>
+          <button onclick="setGuessCategory('skew')" id="guessCatBtn_skew" class="guess-cat-btn px-2.5 py-1 rounded-md text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+            教師補充：歪斜線 (2)
+          </button>
+        </div>
+
+        <!-- 題型切換導航 (上一題、下拉選單、下一題、隨機抽題) -->
+        <div class="flex items-center justify-between gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+          <div class="flex items-center gap-1.5 flex-1 min-w-0">
+            <button onclick="prevGuessQuestion()" title="上一題" class="p-1.5 rounded-md bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition flex items-center justify-center font-bold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <select id="guessQuestionSelect" onchange="jumpGuessQuestion(parseInt(this.value))" class="flex-1 bg-white text-slate-800 font-bold text-xs py-1.5 px-2.5 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer truncate">
+            </select>
+            <button onclick="nextGuessQuestion()" title="下一題" class="p-1.5 rounded-md bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition flex items-center justify-center font-bold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <button onclick="randomGuessQuestion()" class="px-2.5 py-1.5 rounded-md bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold transition whitespace-nowrap shadow-xs">
+            隨機抽題
+          </button>
+        </div>
+
+        <!-- 題目核心問題卡 -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-xs flex flex-col gap-2.5">
+          <div class="flex items-center justify-between">
+            <span id="guessQBadge" class="px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300">正方體 • 題 1 / 3</span>
+            <span id="guessQTitle" class="text-sm font-bold text-slate-900">面對角線 vs 底面邊長</span>
+          </div>
+
+          <!-- 歪斜線補充專用標籤 -->
+          <div id="guessSkewAlert" class="hidden bg-slate-50 border border-slate-300 p-2.5 rounded-lg text-xs text-slate-700 leading-relaxed">
+            <span class="font-bold text-slate-900">【教師補充單元】</span>此兩直線在空間中為<b>歪斜線（不相交）</b>。高職課程中垂直一般定義於相交直線；歪斜線垂直定義為方向向量平移後垂直（夾角 90°），建議於常規課程後再行補充。
+          </div>
+
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm sm:text-base text-slate-900 leading-snug">
+            <span class="font-bold">空間提問：</span><span class="font-bold" id="guessLine1Name">紅線（空間斜線 EB）</span> 與 <span class="font-bold" id="guessLine2Name">紫線（底邊直線 BC）</span> 是否互相垂直？
+          </div>
+        </div>
+
+        <!-- 課堂猜想與解析區塊 -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-xs flex flex-col gap-3">
+          
+          <!-- 未揭曉狀態：投票按鈕列 -->
+          <div id="guessUnrevealedView" class="flex flex-col gap-2.5">
+            <div class="text-xs font-bold text-slate-600">請觀察空間視圖，猜測是否互相垂直：</div>
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="guessPerp(true)" id="btnGuessPerp" class="py-2.5 px-4 rounded-md text-sm font-bold bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-xs transition flex items-center justify-center">
+                互相垂直 (90°)
+              </button>
+              <button onclick="guessPerp(false)" id="btnGuessNotPerp" class="py-2.5 px-4 rounded-md text-sm font-bold bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-xs transition flex items-center justify-center">
+                不互相垂直
+              </button>
+            </div>
+            <button onclick="revealGuessAnswer()" class="w-full py-2.5 rounded-md text-xs sm:text-sm font-bold bg-slate-800 hover:bg-slate-900 text-white shadow-xs transition flex items-center justify-center gap-1.5 mt-1">
+              <span>公佈答案與解析</span>
+            </button>
+          </div>
+
+          <!-- 已揭曉狀態：幾何證明與解析 -->
+          <div id="guessRevealedView" class="hidden flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+              <div id="guessResultBadge" class="flex items-center gap-2"></div>
+              <div class="flex items-center gap-2">
+                <button onclick="hideGuessAnswer()" class="px-2.5 py-1 rounded-md bg-white border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-100 transition">
+                  重猜本題
+                </button>
+                <button onclick="nextGuessQuestion()" class="px-3 py-1 rounded-md bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition shadow-xs">
+                  下一題
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer">
+                <input type="checkbox" id="guessAuxToggle" onchange="toggleGuessAux(this.checked)" class="rounded text-slate-700 focus:ring-slate-500">
+                <span>顯示證明輔助線</span>
+              </label>
+            </div>
+
+            <!-- 核心幾何理由 -->
+            <div id="guessReasonText" class="text-xs sm:text-sm text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200">
+            </div>
+
+            <!-- 視覺盲點提示 -->
+            <div class="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-200 leading-relaxed">
+              <span class="text-slate-900 font-bold">【視覺盲點提示】</span>
+              <span id="guessTrapContent"></span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+<div id="tabContent3" class="w-full h-full hidden flex flex-col lg:flex-row relative bg-white">
+      <!-- 左側 45%：3D 模型 -->
+      <div class="w-full lg:w-[45%] h-1/2 lg:h-full relative border-r border-slate-200">
+        <canvas id="canvasTab2" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+        <div class="absolute top-4 left-6 pointer-events-none bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 shadow-2xs">
+          幾何性質：直線垂直平面時，必垂直該平面上所有通過垂足之直線。
+        </div>
+      </div>
+
+      <!-- 右側 55%：定理內容說明卡 -->
+      <div class="w-full lg:w-[55%] h-1/2 lg:h-full p-8 sm:p-12 flex flex-col justify-between bg-slate-50/70 overflow-y-auto">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-700 tracking-wider">主題一</span>
+            <span class="text-xs px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold">空間幾何</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-6 tracking-tight">三垂線定理敘述</h2>
+
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+            <!-- 課本原文定義 -->
+            <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200">
+              <span class="text-xs font-black text-indigo-900 tracking-wider block mb-1">課本定理敘述（第 132 頁）</span>
+              <p class="text-slate-800 font-medium text-sm leading-relaxed">
+                設直線 $AB$ 垂直平面 $E$ 於 $B$ 點，$L$ 是平面 $E$ 上不通過 $B$ 點的任一直線。若直線 $BC$ 垂直 $L$ 於 $C$ 點，則直線 $AC$ 亦垂直 $L$ 於 $C$ 點。
+              </p>
+            </div>
+
+            <!-- 條件 1 -->
+            <div class="p-4 rounded-2xl bg-white border-2 border-blue-200 shadow-xs">
+              <div class="flex items-center gap-2 font-black text-blue-700 text-sm mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                <span>條件一（線面垂直）</span>
+              </div>
+              <p class="text-slate-900 font-bold text-base">
+                直線 $AB \perp$ 平面 $E$ 於 $B$ 點。
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                直線 $AB$ 垂直平面 $E$ 上通過垂足 $B$ 的任一直線。
+              </p>
+            </div>
+
+            <!-- 條件 2 -->
+            <div class="p-4 rounded-2xl bg-white border-2 border-emerald-200 shadow-xs">
+              <div class="flex items-center gap-2 font-black text-emerald-700 text-sm mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+                <span>條件二（面內垂直）</span>
+              </div>
+              <p class="text-slate-900 font-bold text-base">
+                平面 $E$ 上直線 $BC \perp L$ 於 $C$ 點。
+              </p>
+            </div>
+
+            <!-- 結論 -->
+            <div class="p-4 rounded-2xl bg-white border-2 border-rose-300 shadow-xs">
+              <div class="flex items-center gap-2 font-black text-rose-700 text-sm mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-600 inline-block"></span>
+                <span>結論（空間垂直）</span>
+              </div>
+              <p class="text-slate-900 font-bold text-lg">
+                則空間直線 <span class="text-rose-600 underline decoration-2 underline-offset-4">$AC \perp L$</span> 於 $C$ 點。
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                線段 $\overline{AC}$ 即為空間點 $A$ 到直線 $L$ 的垂直距離。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-xl bg-slate-100 border border-slate-200 text-center text-xs font-bold text-slate-600">
+          線面垂直 $\implies$ 面內垂直 $\implies$ 空間斜線垂直
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3: 典型模型與垂直填空 ================= -->
+    <div id="tabContent4" class="w-full h-full hidden flex flex-col lg:flex-row relative bg-white">
+      <div class="flex-1 h-full relative">
+        <canvas id="canvasTab3" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+        
+        <!-- 頂部求證目標卡片 -->
+        <div class="absolute top-4 left-6 z-10 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 text-xs sm:text-sm">
+          <div class="flex items-center gap-1.5 font-bold text-slate-800">
+            <span>求證目標：</span>
+          </div>
+          <div class="flex items-center gap-2 font-medium" id="tab3CanvasGoalBadge">
+            <!-- 動態填充目標公式 -->
+          </div>
+        </div>
+
+        <!-- 題型切換按鈕列 -->
+        <div class="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-md flex items-center gap-2 flex-wrap max-w-[95%]">
+          <!-- 課本題目 (共用標準雙直角圖形) -->
+          <div class="flex items-center gap-1 border-r border-slate-200 pr-2 mr-1">
+            <span class="text-[11px] font-bold text-slate-400">課本題目：</span>
+            <button onclick="setTab3Model('book_ex4')" id="btnTab3Model_book_ex4" class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-700 text-white shadow-xs transition">
+              例 4
+            </button>
+            <button onclick="setTab3Model('book_hw4')" id="btnTab3Model_book_hw4" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              類題 4
+            </button>
+            <button onclick="setTab3Model('book_ex5')" id="btnTab3Model_book_ex5" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              例 5
+            </button>
+            <button onclick="setTab3Model('book_exercise')" id="btnTab3Model_book_exercise" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              習題 2
+            </button>
+          </div>
+          <!-- 經典多面體基本圖形 -->
+          <div class="flex items-center gap-1">
+            <span class="text-[11px] font-bold text-slate-400">基本圖形：</span>
+            <button onclick="setTab3Model('cuboid')" id="btnTab3Model_cuboid" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              長方體
+            </button>
+            <button onclick="setTab3Model('diagonal')" id="btnTab3Model_diagonal" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              面對角線
+            </button>
+            <button onclick="setTab3Model('pyramid')" id="btnTab3Model_pyramid" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              四角錐
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側：推導填空板 -->
+      <div class="w-full lg:w-[480px] border-l border-slate-200 p-6 sm:p-8 flex flex-col justify-between bg-slate-50/70 overflow-y-auto">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-700 tracking-wider">主題二・練習證明</span>
+            <button onclick="toggleTab3Answers()" class="px-3 py-1 rounded-md bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold transition border border-slate-300 shadow-2xs">
+              顯示答案
+            </button>
+          </div>
+          <h2 id="tab3CardTitle" class="text-xl font-bold text-slate-900 mb-3">長方體模型證明</h2>
+
+          <!-- 求證目標與已知條件 -->
+          <div class="mb-4 p-4 rounded-2xl bg-amber-50/80 border border-amber-200 shadow-2xs">
+            <div class="flex items-center gap-1.5 text-amber-950 font-bold text-sm mb-1.5">
+              <span>【求證】：證明</span>
+              <span id="tab3GoalTarget" class="text-rose-700 font-mono text-base font-bold underline decoration-2 underline-offset-2"></span>
+            </div>
+            <div id="tab3GivenConditions" class="text-xs text-slate-700 font-medium space-y-1 pt-1.5 border-t border-amber-200">
+              <!-- 已知條件動態渲染 -->
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-600 font-medium mb-3">
+            請依三垂線定理之要件，依序找出對應線段完成推導：
+          </p>
+
+          <!-- 3 步推導填空區 -->
+          <div class="space-y-3">
+            <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+              <span class="text-xs font-bold text-blue-700">步驟一：直線垂直底面（線面垂直）</span>
+              <div class="mt-1.5 text-sm sm:text-base font-medium text-slate-800 flex items-center gap-2">
+                <span>線段</span>
+                <span id="tab3Blank1" onclick="revealBlank(1)" class="cursor-pointer px-3.5 py-1 rounded-lg border-2 border-dashed border-blue-400 bg-blue-50 font-mono text-blue-700 text-base font-bold min-w-[65px] text-center hover:bg-blue-100 transition">
+                  ？
+                </span>
+                <span id="tab3BaseText"></span>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+              <span class="text-xs font-bold text-emerald-700">步驟二：平面直線垂直（面內垂直）</span>
+              <div class="mt-1.5 text-sm sm:text-base font-medium text-slate-800 flex items-center gap-2">
+                <span>線段</span>
+                <span id="tab3Blank2" onclick="revealBlank(2)" class="cursor-pointer px-3.5 py-1 rounded-lg border-2 border-dashed border-emerald-400 bg-emerald-50 font-mono text-emerald-700 text-base font-bold min-w-[65px] text-center hover:bg-emerald-100 transition">
+                  ？
+                </span>
+                <span id="tab3TargetText"></span>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-white border border-rose-200 shadow-2xs">
+              <span class="text-xs font-bold text-rose-700">步驟三：由三垂線定理得結論（空間垂直）</span>
+              <div class="mt-1.5 text-sm sm:text-base font-medium text-slate-800 flex items-center gap-2">
+                <span>空間線段</span>
+                <span id="tab3Blank3" onclick="revealBlank(3)" class="cursor-pointer px-3.5 py-1 rounded-lg border-2 border-dashed border-rose-400 bg-rose-50 font-mono text-rose-700 text-base font-bold min-w-[65px] text-center hover:bg-rose-100 transition">
+                  ？
+                </span>
+                <span id="tab3ConclusionText"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 推導完成橫幅 -->
+        <div id="tab3ResultBanner" class="hidden mt-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-center">
+          <span class="text-xs font-bold text-rose-900 block">推導完成</span>
+          <span class="text-xs text-rose-700 font-medium" id="tab3ResultText"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4: 空間距離計算 (例題、類題、習題多題目切換) ================= -->
+    <div id="tabContent5" class="w-full h-full hidden flex flex-col lg:flex-row relative bg-white">
+      <!-- 左側 50%：3D 模型與按鈕 -->
+      <div class="w-full lg:w-1/2 h-1/2 lg:h-full relative border-r border-slate-200">
+        <canvas id="canvasTab4" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+        <div id="tab4CanvasBadge" class="absolute top-4 left-6 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 shadow-xs">
+          <!-- 動態填充標籤 -->
+        </div>
+
+        <!-- 題型切換按鈕列 -->
+        <div class="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 shadow-md flex items-center gap-2 flex-wrap max-w-[95%]">
+          <!-- 課本題目 (共用標準雙直角圖形) -->
+          <div class="flex items-center gap-1 border-r border-slate-200 pr-2 mr-1">
+            <span class="text-[11px] font-bold text-slate-400">課本題目：</span>
+            <button onclick="setTab4Model('book_ex4')" id="btnTab4Model_book_ex4" class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-700 text-white shadow-xs transition">
+              例 4
+            </button>
+            <button onclick="setTab4Model('book_hw4')" id="btnTab4Model_book_hw4" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              類題 4
+            </button>
+            <button onclick="setTab4Model('book_ex5')" id="btnTab4Model_book_ex5" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              例 5
+            </button>
+            <button onclick="setTab4Model('book_hw5')" id="btnTab4Model_book_hw5" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              類題 5
+            </button>
+            <button onclick="setTab4Model('book_exercise')" id="btnTab4Model_book_exercise" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              習題 2
+            </button>
+            <button onclick="setTab4Model('exam_112')" id="btnTab4Model_exam_112" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              統測 112
+            </button>
+          </div>
+          <!-- 經典多面體基本圖形 -->
+          <div class="flex items-center gap-1">
+            <span class="text-[11px] font-bold text-slate-400">基本圖形：</span>
+            <button onclick="setTab4Model('cuboid')" id="btnTab4Model_cuboid" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              長方體
+            </button>
+            <button onclick="setTab4Model('diagonal')" id="btnTab4Model_diagonal" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition">
+              面對角線
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側 50%：推導與計算 -->
+      <div class="w-full lg:w-1/2 h-1/2 lg:h-full p-6 sm:p-8 flex flex-col justify-between bg-slate-50/60 overflow-y-auto">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-700 tracking-wider">主題三・距離計算</span>
+            <div class="flex items-center gap-2">
+              <button id="btnTab4ToggleSolution" onclick="toggleTab4Solution()" class="hidden px-3 py-1 rounded-md bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold transition border border-slate-300 shadow-2xs">
+                顯示完整解析
+              </button>
+            </div>
+          </div>
+          <h2 id="tab4CardTitle" class="text-xl sm:text-2xl font-black text-slate-900 mb-3">
+            【例題 1】長方體體對角線長度計算
+          </h2>
+
+          <!-- 題目情境卡片 -->
+          <div id="tab4QuestionCard" class="mb-3.5 p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 shadow-2xs text-xs sm:text-sm text-slate-800 leading-relaxed">
+          </div>
+
+          <!-- 步驟一：確認直角 -->
+          <div id="tab4Step1Wrapper" class="mb-3.5 p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs text-xs sm:text-sm leading-relaxed">
+            <span class="font-bold text-slate-900 block mb-1">【步驟一：確認直角關係】</span>
+            <div id="tab4Step1Content" class="space-y-1.5 text-slate-700">
+            </div>
+          </div>
+
+          <!-- 步驟二：2 個平面直角三角形展開 -->
+          <div id="tab4Step2Wrapper">
+            <span class="font-bold text-slate-900 block mb-2 text-xs sm:text-sm">【步驟二：兩步驟平面計算】</span>
+            <div id="tab4TrianglesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            </div>
+          </div>
+        </div>
+
+        <div id="tab4ResultBanner" class="mt-3 p-3 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 shadow-2xs">
+          <span id="tab4ResultText"></span>
+        </div>
+      </div>
+    </div>
+
+    </main>
+
+  <script>
+// ==========================================
+    // KaTeX 安全編譯與整體排版輔助函數
+    // ==========================================
+    function katexSafe(latex, display = false) {
+      if (window.katex) {
+        try {
+          return window.katex.renderToString(latex, { displayMode: display, throwOnError: false });
+        } catch (e) {
+          console.warn("KaTeX render error:", latex, e);
+          return latex;
+        }
+      }
+      return latex;
+    }
+
+    function renderAllMath(element = document.body) {
+      if (window.renderMathInElement) {
+        try {
+          window.renderMathInElement(element, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false }
+            ],
+            ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+            throwOnError: false
+          });
+        } catch (e) {
+          console.warn("renderMathInElement error:", e);
+        }
+      }
+    }
+
+    // ==========================================
+    // 3D 數學基礎工具庫
+    // ==========================================
+    function sub3D(a, b) { return [a[0]-b[0], a[1]-b[1], a[2]-b[2]]; }
+    function add3D(a, b) { return [a[0]+b[0], a[1]+b[1], a[2]+b[2]]; }
+    function dot3D(a, b) { return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
+    function cross3D(a, b) {
+      return [
+        a[1]*b[2] - a[2]*b[1],
+        a[2]*b[0] - a[0]*b[2],
+        a[0]*b[1] - a[1]*b[0]
+      ];
+    }
+    function length3D(v) { return Math.hypot(v[0], v[1], v[2]); }
+    function normalize3D(v) {
+      const len = length3D(v);
+      return len > 1e-6 ? [v[0]/len, v[1]/len, v[2]/len] : [0, 0, 0];
+    }
+
+    // 計算將某平面轉正 (平行於螢幕) 的相機 yaw 與 pitch
+    function getFlatViewAngles(vO, v1, v2) {
+      const d1 = sub3D(v1, vO);
+      const d2 = sub3D(v2, vO);
+      let n = cross3D(d1, d2);
+      let nlen = length3D(n);
+      if (nlen < 1e-6) return { yaw: 0, pitch: 0 };
+      n = [n[0]/nlen, n[1]/nlen, n[2]/nlen];
+
+      const yaw = Math.atan2(n[0], n[2]);
+      const z_rot = Math.hypot(n[0], n[2]);
+      const pitch = Math.atan2(n[1], z_rot);
+      return { yaw, pitch };
+    }
+
+    // ==========================================
+    // 相機系統 (支持滑鼠拖曳、滾輪縮放與平滑動畫)
+    // ==========================================
+    const cam = {
+      yaw: -0.55,
+      pitch: 0.42,
+      distance: 6.0,
+      targetYaw: -0.55,
+      targetPitch: 0.42
+    };
+
+    let cameraAnimId = null;
+    function animateCameraTo(targetYaw, targetPitch, duration = 600, callback) {
+      if (cameraAnimId) cancelAnimationFrame(cameraAnimId);
+      const startYaw = cam.yaw;
+      const startPitch = cam.pitch;
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        // easeInOutCubic
+        const ease = progress < 0.5 
+          ? 4 * progress * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        cam.yaw = startYaw + (targetYaw - startYaw) * ease;
+        cam.pitch = startPitch + (targetPitch - startPitch) * ease;
+
+        renderActiveTab();
+
+        if (progress < 1) {
+          cameraAnimId = requestAnimationFrame(step);
+        } else {
+          cameraAnimId = null;
+          if (callback) callback();
+        }
+      }
+      cameraAnimId = requestAnimationFrame(step);
+    }
+
+    function resetCameraAngle(preset = 'TR') {
+      if (preset === 'TR') {
+        animateCameraTo(-0.55, 0.42, 450);
+      } else if (preset === 'TL') {
+        animateCameraTo(0.55, 0.42, 450);
+      }
+    }
+
+    function getCameraWorldPos() {
+      const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+      const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+      return [
+        cam.distance * sy * cp,
+        cam.distance * sp,
+        cam.distance * cy * cp
+      ];
+    }
+
+    function project3D(pt, w, h, zoom = 1.0) {
+      const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+      const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+      
+      // 繞 Y 軸 (-yaw)
+      const x = pt[0]*cy - pt[2]*sy;
+      const y = pt[1];
+      const z = pt[0]*sy + pt[2]*cy;
+      
+      // 繞 X 軸 (-pitch)
+      const y2 = y*cp - z*sp;
+      const z2 = y*sp + z*cp;
+      
+      // 正確的點到相機距離 (近大遠小)
+      const distToCam = cam.distance - z2;
+      const fov = 0.82 * Math.min(w, h) * zoom;
+      const scale = fov / Math.max(0.1, distToCam);
+      
+      return {
+        x: w / 2 + x * scale,
+        y: h / 2 - y2 * scale,
+        distToCam: distToCam
+      };
+    }
+
+    // 精緻化 3D 直角方塊 (尺寸適中、銳利、空間貼合)
+    function draw3DRightAngle(ctx, vO, v1, v2, w, h, size = 0.22, color = '#dc2626', zoom = 1.0) {
+      const d1 = normalize3D(sub3D(v1, vO));
+      const d2 = normalize3D(sub3D(v2, vO));
+      const p1 = [vO[0] + d1[0]*size, vO[1] + d1[1]*size, vO[2] + d1[2]*size];
+      const p2 = [vO[0] + (d1[0]+d2[0])*size, vO[1] + (d1[1]+d2[1])*size, vO[2] + (d1[2]+d2[2])*size];
+      const p3 = [vO[0] + d2[0]*size, vO[1] + d2[1]*size, vO[2] + d2[2]*size];
+
+      const sO = project3D(vO, w, h, zoom);
+      const s1 = project3D(p1, w, h, zoom);
+      const s2 = project3D(p2, w, h, zoom);
+      const s3 = project3D(p3, w, h, zoom);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(s1.x, s1.y);
+      ctx.lineTo(s2.x, s2.y);
+      ctx.lineTo(s3.x, s3.y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      ctx.lineTo(sO.x, sO.y);
+      ctx.closePath();
+      ctx.fillStyle = color === '#dc2626' ? 'rgba(220, 38, 38, 0.18)' : (color === '#2563eb' ? 'rgba(37, 99, 235, 0.18)' : 'rgba(16, 185, 129, 0.18)');
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBadgeNumber(ctx, x, y, text, color = '#2563eb') {
+      ctx.save();
+      ctx.font = 'bold 12px sans-serif';
+      const str = String(text);
+      if (str.length <= 2) {
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(str, x, y);
+      } else {
+        const tm = ctx.measureText(str);
+        const pw = Math.max(26, tm.width + 12);
+        const ph = 22;
+        const rx = x - pw / 2;
+        const ry = y - ph / 2;
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(rx, ry, pw, ph, 7);
+        } else {
+          ctx.rect(rx, ry, pw, ph);
+        }
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(str, x, y);
+      }
+      ctx.restore();
+    }
+
+    // ==========================================
+    // 多面體面法向量與可見性判定 (虛實線精確分離)
+    // ==========================================
+    function computeFaceVisibility(shape, camPos) {
+      const vis = [];
+      for (let i = 0; i < shape.faces.length; i++) {
+        const face = shape.faces[i];
+        const p0 = shape.vertices[face[0]];
+        const p1 = shape.vertices[face[1]];
+        const p2 = shape.vertices[face[2]];
+        const normal = normalize3D(cross3D(sub3D(p1, p0), sub3D(p2, p0)));
+        const toCam = normalize3D(sub3D(camPos, p0));
+        vis.push(dot3D(normal, toCam) > 0.001);
+      }
+      return vis;
+    }
+
+    function drawShapeEdges(ctx, shape, projected, faceVis) {
+      shape.edges.forEach(edge => {
+        const pA = projected[edge.v[0]];
+        const pB = projected[edge.v[1]];
+        const isVisible = (edge.f.length === 1) 
+          ? faceVis[edge.f[0]] 
+          : (faceVis[edge.f[0]] || faceVis[edge.f[1]]);
+
+        ctx.save();
+        if (isVisible) {
+          ctx.strokeStyle = '#64748b';
+          ctx.lineWidth = 2.0;
+          ctx.setLineDash([]);
+        } else {
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.lineWidth = 1.4;
+          ctx.setLineDash([5, 4]);
+        }
+        ctx.beginPath();
+        ctx.moveTo(pA.x, pA.y);
+        ctx.lineTo(pB.x, pB.y);
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // ==========================================
+    // 幾何形狀定義庫
+    // ==========================================
+
+const SHAPES_DATA = {
+      regularCube: {
+        name: '正方體',
+        vertices: [
+          [-1.1, -1.1, -1.1], [ 1.1, -1.1, -1.1], [ 1.1, -1.1,  1.1], [-1.1, -1.1,  1.1],
+          [-1.1,  1.1, -1.1], [ 1.1,  1.1, -1.1], [ 1.1,  1.1,  1.1], [-1.1,  1.1,  1.1]
+        ],
+        labels: ['D', 'C', 'B', 'A', 'H', 'G', 'F', 'E'],
+        faces: [
+          [3, 2, 6, 7], // 0: 前面 (Z+)
+          [1, 0, 4, 5], // 1: 後面 (Z-)
+          [2, 1, 5, 6], // 2: 右面 (X+)
+          [0, 3, 7, 4], // 3: 左面 (X-)
+          [7, 6, 5, 4], // 4: 頂面 (Y+)
+          [0, 1, 2, 3]  // 5: 底面 (Y-)
+        ],
+        edges: [
+          { v: [0, 1], f: [1, 5] }, { v: [1, 2], f: [2, 5] }, { v: [2, 3], f: [0, 5] }, { v: [3, 0], f: [3, 5] },
+          { v: [4, 5], f: [1, 4] }, { v: [5, 6], f: [2, 4] }, { v: [6, 7], f: [0, 4] }, { v: [7, 4], f: [3, 4] },
+          { v: [0, 4], f: [1, 3] }, { v: [1, 5], f: [1, 2] }, { v: [2, 6], f: [0, 2] }, { v: [3, 7], f: [0, 3] }
+        ]
+      },
+      cube: {
+        name: '長方體',
+        vertices: [
+          [-1.6, -0.9, -1.1], [ 1.6, -0.9, -1.1], [ 1.6, -0.9,  1.1], [-1.6, -0.9,  1.1],
+          [-1.6,  0.9, -1.1], [ 1.6,  0.9, -1.1], [ 1.6,  0.9,  1.1], [-1.6,  0.9,  1.1]
+        ],
+        labels: ['D', 'C', 'B', 'A', 'H', 'G', 'F', 'E'],
+        faces: [
+          [3, 2, 6, 7], // 0: 前面
+          [1, 0, 4, 5], // 1: 後面
+          [2, 1, 5, 6], // 2: 右面
+          [0, 3, 7, 4], // 3: 左面
+          [7, 6, 5, 4], // 4: 頂面
+          [0, 1, 2, 3]  // 5: 底面
+        ],
+        edges: [
+          { v: [0, 1], f: [1, 5] }, { v: [1, 2], f: [2, 5] }, { v: [2, 3], f: [0, 5] }, { v: [3, 0], f: [3, 5] },
+          { v: [4, 5], f: [1, 4] }, { v: [5, 6], f: [2, 4] }, { v: [6, 7], f: [0, 4] }, { v: [7, 4], f: [3, 4] },
+          { v: [0, 4], f: [1, 3] }, { v: [1, 5], f: [1, 2] }, { v: [2, 6], f: [0, 2] }, { v: [3, 7], f: [0, 3] }
+        ]
+      },
+      prism: {
+        name: '直角三稜柱',
+        vertices: [
+          [-1.3, -1.0, -1.1], // 0: C
+          [ 1.3, -1.0,  1.1], // 1: B
+          [-1.3, -1.0,  1.1], // 2: A (Angle A = 90 deg: CA ⟂ AB)
+          [-1.3,  1.0, -1.1], // 3: F (above C)
+          [ 1.3,  1.0,  1.1], // 4: E (above B)
+          [-1.3,  1.0,  1.1]  // 5: D (above A)
+        ],
+        labels: ['C', 'B', 'A', 'F', 'E', 'D'],
+        faces: [
+          [0, 1, 2],    // 0: 底面 △CBA
+          [3, 5, 4],    // 1: 頂面 △FED
+          [0, 3, 4, 1], // 2: 斜側矩形
+          [0, 2, 5, 3], // 3: 左側矩形 CAFD
+          [2, 1, 4, 5]  // 4: 前側矩形 ABED
+        ],
+        edges: [
+          { v: [0, 1], f: [0, 2] }, { v: [1, 2], f: [0, 4] }, { v: [2, 0], f: [0, 3] },
+          { v: [3, 4], f: [1, 2] }, { v: [4, 5], f: [1, 4] }, { v: [5, 3], f: [1, 3] },
+          { v: [0, 3], f: [2, 3] }, { v: [1, 4], f: [2, 4] }, { v: [2, 5], f: [3, 4] }
+        ]
+      },
+      pyramid: {
+        name: '四角錐',
+        vertices: [
+          [-1.2, -1.0, -1.2], // 0: D
+          [ 1.2, -1.0, -1.2], // 1: C
+          [ 1.2, -1.0,  1.2], // 2: B
+          [-1.2, -1.0,  1.2], // 3: A
+          [ 0.0,  1.2,  0.0], // 4: P (apex)
+          [ 0.0, -1.0,  0.0], // 5: O (base center)
+          [ 1.2, -1.0,  0.0]  // 6: M (midpoint of BC)
+        ],
+        labels: ['D', 'C', 'B', 'A', 'P', 'O', 'M'],
+        faces: [
+          [0, 1, 2, 3], // 0: 底面
+          [3, 2, 4],    // 1: 前面
+          [2, 1, 4],    // 2: 右面
+          [1, 0, 4],    // 3: 後面
+          [0, 3, 4]     // 4: 左面
+        ],
+        edges: [
+          { v: [0, 1], f: [0, 3] }, { v: [1, 2], f: [0, 2] }, { v: [2, 3], f: [0, 1] }, { v: [3, 0], f: [0, 4] },
+          { v: [0, 4], f: [3, 4] }, { v: [1, 4], f: [2, 3] }, { v: [2, 4], f: [1, 2] }, { v: [3, 4], f: [1, 4] }
+        ]
+      },
+      tetrahedron: {
+        name: '正四面體',
+        vertices: [
+          [ 1.0,  1.0,  1.0], // 0: A
+          [ 1.0, -1.0, -1.0], // 1: B
+          [-1.0,  1.0, -1.0], // 2: C
+          [-1.0, -1.0,  1.0]  // 3: D
+        ],
+        labels: ['A', 'B', 'C', 'D'],
+        faces: [
+          [0, 1, 2],
+          [0, 2, 3],
+          [0, 3, 1],
+          [1, 3, 2]
+        ],
+        edges: [
+          { v: [0, 1], f: [0, 2] }, { v: [1, 2], f: [0, 3] }, { v: [2, 0], f: [0, 1] },
+          { v: [0, 3], f: [1, 2] }, { v: [3, 1], f: [2, 3] }, { v: [2, 3], f: [1, 3] }
+        ]
+      },
+      book_model: {
+        name: '課本例 4 空間模型',
+        isGroundPlane: true,
+        planeY: -0.85,
+        groundCorners: [
+          [-1.7, -0.85, -1.4], [ 1.7, -0.85, -1.4],
+          [ 1.7, -0.85,  1.5], [-1.7, -0.85,  1.5]
+        ],
+        vertices: [
+          [ 0.3,  0.95, -0.1], // 0: A (立柱頂端)
+          [-0.6, -0.85,  0.0], // 1: B (底面垂足)
+          [ 0.55, -0.85, 0.45], // 2: C (直線 L 上垂足)
+          [ 1.35, -0.85, 0.75], // 3: D (直線 L 上另一點)
+          [-0.65, -0.85, -0.0], // 4: L1
+          [ 1.6,  -0.85, 0.85]  // 5: L2
+        ],
+        labels: ['A', 'B', 'C', 'D', '', ''],
+        faces: [],
+        edges: [
+          { v: [0, 1], f: [] },
+          { v: [1, 2], f: [] },
+          { v: [4, 5], f: [] }
+        ]
+      },
+      piano_model: {
+        name: '平台型鋼琴頂蓋模型',
+        isGroundPlane: true,
+        planeY: -0.85,
+        groundCorners: [
+          [-1.7, -0.85, -1.4], [ 1.7, -0.85, -1.4],
+          [ 1.7, -0.85,  1.5], [-1.7, -0.85,  1.5]
+        ],
+        vertices: [
+          [ 0.3,  0.95, -0.1], // 0: A (琴蓋頂端)
+          [-0.6, -0.85,  0.0], // 1: B (琴蓋垂足)
+          [ 0.55, -0.85, 0.45], // 2: C (鉸鍊軸點)
+          [ 1.35, -0.85, 0.75], // 3: D (鉸鍊軸點)
+          [-0.65, -0.85, -0.0], // 4: L1
+          [ 1.6,  -0.85, 0.85]  // 5: L2
+        ],
+        labels: ['A', 'B', 'C', 'D', '', ''],
+        faces: [],
+        edges: [
+          { v: [0, 1], f: [] },
+          { v: [1, 2], f: [] },
+          { v: [4, 5], f: [] }
+        ]
+      }
+    };
+
+    // 拖曳旋轉綁定
+    // ==========================================
+    function setupOrbitDrag(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      let isDragging = false;
+      let lastX = 0, lastY = 0;
+
+      canvas.addEventListener('pointerdown', e => {
+        isDragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        canvas.setPointerCapture(e.pointerId);
+      });
+
+      canvas.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        // 滑鼠向右拉時，物體跟隨向右轉動 (cam.yaw -= dx)
+        cam.yaw -= dx * 0.007;
+        cam.pitch += dy * 0.007;
+        cam.pitch = Math.max(-1.45, Math.min(1.45, cam.pitch));
+
+        renderActiveTab();
+      });
+
+      canvas.addEventListener('pointerup', e => {
+        isDragging = false;
+        try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+      });
+
+      canvas.addEventListener('wheel', e => {
+        e.preventDefault();
+        cam.distance += e.deltaY * 0.0035;
+        cam.distance = Math.max(3.0, Math.min(10.0, cam.distance));
+        renderActiveTab();
+      }, { passive: false });
+    }
+
+const GUESS_QUESTIONS = [
+  {
+    "id": 1,
+    "category": "regularCube",
+    "categoryName": "正方體",
+    "title": "面對角線 vs 底面邊長（相交於頂點 B）",
+    "shape": "regularCube",
+    "line1": {
+      "start": 7,
+      "end": 2,
+      "name": "面對角線 EB"
+    },
+    "line2": {
+      "start": 2,
+      "end": 1,
+      "name": "底面邊長 BC"
+    },
+    "intersectVertex": "B",
+    "isSkew": false,
+    "isPerpendicular": true,
+    "angleDeg": 90,
+    "rightAngle": {
+      "vertex": 2,
+      "arm1": 7,
+      "arm2": 1
+    },
+    "auxLines": [
+      {
+        "start": 7,
+        "end": 3,
+        "label": "EA ⟂ 底面",
+        "color": "#0284c7"
+      },
+      {
+        "start": 3,
+        "end": 2,
+        "label": "AB ⟂ BC",
+        "color": "#059669"
+      }
+    ],
+    "reason": "<b>三垂線定理成立！兩直線互相垂直！</b><br>1. 鉛垂稜 $\\overline{EA} \\perp$ 底面 $ABCD$<br>2. 底面邊長 $\\overline{AB} \\perp \\overline{BC}$<br>$\\implies$ 兩線相交於頂點 $B$，由三垂線定理得：$\\overline{EB} \\perp \\overline{BC}$（$\\angle EBC = 90^\\circ$）。",
+    "trapInsight": "在平面俯視下容易誤以為夾角是鈍角，拖曳旋轉 3D 正對側面，即可清晰看見頂點 B 處是標準的 90° 直角！"
+  },
+  {
+    "id": 2,
+    "category": "regularCube",
+    "categoryName": "正方體",
+    "title": "相鄰兩面對角線（相交於頂點 E）",
+    "shape": "regularCube",
+    "line1": {
+      "start": 7,
+      "end": 2,
+      "name": "面對角線 EB"
+    },
+    "line2": {
+      "start": 7,
+      "end": 0,
+      "name": "面對角線 ED"
+    },
+    "intersectVertex": "E",
+    "isSkew": false,
+    "isPerpendicular": false,
+    "angleDeg": 60,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 2,
+        "end": 0,
+        "label": "底面對角線 BD",
+        "color": "#e11d48"
+      }
+    ],
+    "reason": "<b>兩直線不垂直！真實夾角為 60°！</b><br>連接頂點 $B$ 與 $D$，形成 $\\triangle EBD$。<br>三邊 $\\overline{EB} = \\overline{ED} = \\overline{BD} = \\sqrt{2}a$ 全為面對角線，此為<b>正三角形</b>，夾角 $\\angle BED = 60^\\circ$。",
+    "trapInsight": "學生常因兩邊皆在垂直相鄰面上而誤以為夾角是直角，其實連起第三邊即為完美的正三角形（60°）。"
+  },
+  {
+    "id": 3,
+    "category": "regularCube",
+    "categoryName": "正方體",
+    "title": "空間對角線 vs 底面邊長（相交於頂點 C）",
+    "shape": "regularCube",
+    "line1": {
+      "start": 7,
+      "end": 1,
+      "name": "空間對角線 EC"
+    },
+    "line2": {
+      "start": 1,
+      "end": 2,
+      "name": "底面邊長 BC"
+    },
+    "intersectVertex": "C",
+    "isSkew": false,
+    "isPerpendicular": false,
+    "angleDeg": 55,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 7,
+        "end": 3,
+        "label": "EA ⟂ 底面",
+        "color": "#0284c7"
+      },
+      {
+        "start": 3,
+        "end": 1,
+        "label": "底面對角線 AC",
+        "color": "#64748b"
+      }
+    ],
+    "reason": "<b>兩直線不垂直！真實夾角約為 54.7°！</b><br>在直角 $\\triangle EAC$ 中，$\\overline{EC}$ 為空間對角線（長 $\\sqrt{3}a$）。<br>$\\cos \\angle ECB = \\frac{\\overline{BC}}{\\overline{EC}} = \\frac{1}{\\sqrt{3}} \\approx 0.577 \\implies \\angle ECB \\approx 54.7^\\circ$。",
+    "trapInsight": "空間對角線貫穿立體內部，與底面邊長並非直角關係。"
+  },
+  {
+    "id": 4,
+    "category": "cube",
+    "categoryName": "長方體",
+    "title": "側面斜線 vs 側面底邊（相交於頂點 B）",
+    "shape": "cube",
+    "line1": {
+      "start": 7,
+      "end": 2,
+      "name": "側面斜線 EB"
+    },
+    "line2": {
+      "start": 2,
+      "end": 3,
+      "name": "側面底邊 AB"
+    },
+    "intersectVertex": "B",
+    "isSkew": false,
+    "isPerpendicular": false,
+    "angleDeg": 29,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 7,
+        "end": 3,
+        "label": "側面鉛垂稜 EA",
+        "color": "#64748b"
+      }
+    ],
+    "reason": "<b>兩直線不垂直！這是直角三角形的銳角！</b><br>兩直線同在側面矩形 $ABFE$ 內，$\\overline{EB}$ 為對角線。<br>$\\angle EBA$ 只是直角 $\\triangle EAB$ 的其中一個銳角（約 $29^\\circ$），不是直角！",
+    "trapInsight": "學生常把直角三角形中的銳角與空間直角混淆，轉至側面可清楚看出是銳角。"
+  },
+  {
+    "id": 5,
+    "category": "cube",
+    "categoryName": "長方體",
+    "title": "鉛垂側稜 vs 底面對角線（相交於頂點 A）",
+    "shape": "cube",
+    "line1": {
+      "start": 7,
+      "end": 3,
+      "name": "鉛垂側稜 EA"
+    },
+    "line2": {
+      "start": 3,
+      "end": 1,
+      "name": "底面對角線 AC"
+    },
+    "intersectVertex": "A",
+    "isSkew": false,
+    "isPerpendicular": true,
+    "angleDeg": 90,
+    "rightAngle": {
+      "vertex": 3,
+      "arm1": 7,
+      "arm2": 1
+    },
+    "auxLines": [],
+    "reason": "<b>線面垂直定理！兩直線互相垂直！</b><br>長方體的鉛垂側稜 $\\overline{EA} \\perp$ 底面 $ABCD$。<br>根據空間幾何核心定理：<b>「若一直線垂直一平面，則它必垂直該平面上所有通過垂足的直線」</b>。<br>$\\implies \\overline{EA} \\perp \\overline{AC}$（$\\angle EAC = 90^\\circ$）。",
+    "trapInsight": "雖然底面對角線 AC 在空間透視圖上是傾斜的，但鉛垂立柱對底面上任意線段永遠維持 90° 垂直！"
+  },
+  {
+    "id": 6,
+    "category": "prism",
+    "categoryName": "直角三稜柱",
+    "title": "斜面斜線 vs 底面直角邊（課本原型，相交於 A）",
+    "shape": "prism",
+    "line1": {
+      "start": 3,
+      "end": 2,
+      "name": "斜面斜線 FA"
+    },
+    "line2": {
+      "start": 2,
+      "end": 1,
+      "name": "底面直角邊 AB"
+    },
+    "intersectVertex": "A",
+    "isSkew": false,
+    "isPerpendicular": true,
+    "angleDeg": 90,
+    "rightAngle": {
+      "vertex": 2,
+      "arm1": 3,
+      "arm2": 1
+    },
+    "auxLines": [
+      {
+        "start": 3,
+        "end": 0,
+        "label": "側稜 FC ⟂ 底面",
+        "color": "#0284c7"
+      },
+      {
+        "start": 0,
+        "end": 2,
+        "label": "CA ⟂ AB",
+        "color": "#059669"
+      }
+    ],
+    "reason": "<b>課本例題 4 標準模型！三垂線定理成立！</b><br>1. 鉛垂稜 $\\overline{FC} \\perp$ 底面 $\\triangle ABC$<br>2. 直角底面 $\\overline{CA} \\perp \\overline{AB}$<br>$\\implies$ 由三垂線定理得：斜面斜線 $\\overline{FA} \\perp \\overline{AB}$（$\\angle FAB = 90^\\circ$）。",
+    "trapInsight": "課本最核心的原型題目！此題正是三垂線定理的經典範例。"
+  },
+  {
+    "id": 7,
+    "category": "prism",
+    "categoryName": "直角三稜柱",
+    "title": "斜面斜線 vs 側面直角邊（相交於頂點 A）",
+    "shape": "prism",
+    "line1": {
+      "start": 3,
+      "end": 2,
+      "name": "斜面斜線 FA"
+    },
+    "line2": {
+      "start": 0,
+      "end": 2,
+      "name": "側面直角邊 CA"
+    },
+    "intersectVertex": "A",
+    "isSkew": false,
+    "isPerpendicular": false,
+    "angleDeg": 37,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 3,
+        "end": 0,
+        "label": "FC ⟂ 底面",
+        "color": "#64748b"
+      }
+    ],
+    "reason": "<b>兩直線不垂直！此為直角三角形側面銳角！</b><br>在側面直角 $\\triangle FCA$ 中，$\\overline{FC} \\perp \\overline{CA}$，因此 $\\overline{FA}$ 為斜邊。<br>$\\angle FAC$ 為該直角三角形的銳角（約 $37^\\circ$），並非直角。",
+    "trapInsight": "學生容易將垂足搞混，真正的三垂線垂直角落在頂點 A 處的 FA 與 AB，而非 FA 與 CA。"
+  },
+  {
+    "id": 8,
+    "category": "pyramid",
+    "categoryName": "四角錐",
+    "title": "斜面高 vs 底面邊長（相交於中點 M）",
+    "shape": "pyramid",
+    "line1": {
+      "start": 4,
+      "end": 6,
+      "name": "斜面高 PM"
+    },
+    "line2": {
+      "start": 1,
+      "end": 6,
+      "name": "底面邊長 BC"
+    },
+    "intersectVertex": "M",
+    "isSkew": false,
+    "isPerpendicular": true,
+    "angleDeg": 90,
+    "rightAngle": {
+      "vertex": 6,
+      "arm1": 4,
+      "arm2": 1
+    },
+    "auxLines": [
+      {
+        "start": 4,
+        "end": 5,
+        "label": "頂點高 PO ⟂ 底面",
+        "color": "#0284c7"
+      },
+      {
+        "start": 5,
+        "end": 6,
+        "label": "OM ⟂ BC",
+        "color": "#059669"
+      }
+    ],
+    "reason": "<b>正四角錐經典高！三垂線定理成立！</b><br>1. 中心鉛垂高 $\\overline{PO} \\perp$ 底面正方形<br>2. 中心連線 $\\overline{OM} \\perp$ 底邊 $\\overline{BC}$<br>$\\implies$ 由三垂線定理得：斜面中線 $\\overline{PM} \\perp \\overline{BC}$（$\\angle PMC = 90^\\circ$）。",
+    "trapInsight": "等腰三角形側面的中線正好也是垂直高，也是四角錐計算表面積與斜高最重要的直角。"
+  },
+  {
+    "id": 9,
+    "category": "pyramid",
+    "categoryName": "四角錐",
+    "title": "側稜 vs 底面邊長（相交於頂點 B，視覺陷阱！）",
+    "shape": "pyramid",
+    "line1": {
+      "start": 4,
+      "end": 2,
+      "name": "側稜 PB"
+    },
+    "line2": {
+      "start": 1,
+      "end": 2,
+      "name": "底面邊長 BC"
+    },
+    "intersectVertex": "B",
+    "isSkew": false,
+    "isPerpendicular": false,
+    "angleDeg": 64,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 4,
+        "end": 6,
+        "label": "斜面高 PM ⟂ BC",
+        "color": "#059669"
+      }
+    ],
+    "reason": "<b>極具欺騙性！兩直線不垂直！</b><br>在側面等腰 $\\triangle PBC$ 中，腰長 $\\overline{PB} = \\overline{PC}$。<br>$\\angle PBC$ 為等腰三角形的底角（約 $64^\\circ$），只有中線 $\\overline{PM}$ 垂直底邊，側稜 $\\overline{PB}$ 絕非直角！",
+    "trapInsight": "學生最常犯的直覺錯誤！看 3D 視圖常誤認側稜垂直底邊，旋轉至側面看清楚等腰三角形即可破除迷思。"
+  },
+  {
+    "id": 10,
+    "category": "skew",
+    "categoryName": "歪斜線補充",
+    "title": "正方體：正面對角線 vs 背面對角線（歪斜線）",
+    "shape": "regularCube",
+    "line1": {
+      "start": 7,
+      "end": 2,
+      "name": "正面對角線 EB"
+    },
+    "line2": {
+      "start": 0,
+      "end": 5,
+      "name": "背面對角線 DG"
+    },
+    "intersectVertex": null,
+    "isSkew": true,
+    "isPerpendicular": true,
+    "angleDeg": 90,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 7,
+        "end": 0,
+        "label": "平移對角線 ED",
+        "color": "#e11d48"
+      }
+    ],
+    "reason": "<b>空間方向垂直！平移夾角為 90°！</b><br>兩直線不相交。若將背面的 $\\overline{DG}$ 平移至正面得到 $\\overline{AF}$，由正方形對角線互相垂直性質，向量內積 $\\vec{EB} \\cdot \\vec{DG} = 0$。<br>因此在空間向量定義下，兩歪斜線方向互相垂直（夾角 90°）。",
+    "trapInsight": "兩條直線在空間中雖然永不相交，但透過向量平移至同一頂點，即可定義其方向夾角為 90°。"
+  },
+  {
+    "id": 11,
+    "category": "skew",
+    "categoryName": "歪斜線補充",
+    "title": "正方體：空間對角線 vs 底面對角線（歪斜線）",
+    "shape": "regularCube",
+    "line1": {
+      "start": 7,
+      "end": 1,
+      "name": "空間對角線 EC"
+    },
+    "line2": {
+      "start": 2,
+      "end": 0,
+      "name": "底面對角線 BD"
+    },
+    "intersectVertex": null,
+    "isSkew": true,
+    "isPerpendicular": true,
+    "angleDeg": 90,
+    "rightAngle": null,
+    "auxLines": [
+      {
+        "start": 3,
+        "end": 1,
+        "label": "底面對角線 AC ⟂ BD",
+        "color": "#059669"
+      },
+      {
+        "start": 7,
+        "end": 3,
+        "label": "EA ⟂ 底面",
+        "color": "#0284c7"
+      }
+    ],
+    "reason": "<b>高中震撼經典！空間對角線與底面對角線互相垂直！</b><br>1. $\\overline{EA} \\perp$ 底面 $\\implies \\overline{EA} \\perp \\overline{BD}$<br>2. 底面正方形對角線 $\\overline{AC} \\perp \\overline{BD}$<br>$\\implies \\overline{BD} \\perp$ 平面 $EAC$！因為平面包含 $\\overline{EC}$，所以 $\\overline{BD} \\perp \\overline{EC}$（內積為 0）！",
+    "trapInsight": "學生從上方俯視看似歪斜任意交叉，但其實空間對角線垂直於另一側的底面對角線，是三垂線定理的精彩推論！"
+  }
+];
+
+
+    // ==========================================
+    // TAB 1: 前導：空間透視觀察
+    // ==========================================
+    let tab1Shape = 'regularCube';
+    let tab1RevealTTP = false;
+
+    function setTab1Shape(shapeKey) {
+      tab1Shape = shapeKey;
+
+      document.querySelectorAll('.t1-shape-btn').forEach(btn => {
+        btn.className = 't1-shape-btn px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+      });
+      const activeBtn = document.getElementById('shapeBtn_' + shapeKey);
+      if (activeBtn) {
+        activeBtn.className = 't1-shape-btn px-4 py-2 rounded-lg text-xs font-bold bg-slate-800 text-white shadow-xs';
+      }
+      renderTab1();
+    }
+
+    function toggleTab1TTP() {
+      tab1RevealTTP = !tab1RevealTTP;
+      const btn = document.getElementById('btnTab1RevealTTP');
+      const card = document.getElementById('tab1GuessCard');
+
+      if (tab1RevealTTP) {
+        btn.className = 'px-5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-slate-800 text-white shadow-xs flex items-center gap-2 transition hover:bg-slate-900';
+        btn.innerHTML = '<span>隱藏標記直線</span>';
+        if (card) card.classList.remove('hidden');
+      } else {
+        btn.className = 'px-5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-blue-700 text-white shadow-xs transition hover:bg-blue-800';
+        btn.innerHTML = '<span>標記待觀察直線</span>';
+        if (card) card.classList.add('hidden');
+      }
+      renderTab1();
+    }
+
+    function renderTab1() {
+      const canvas = document.getElementById('canvasTab1');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const shape = SHAPES_DATA[tab1Shape];
+      if (!shape) return;
+      const camPos = getCameraWorldPos();
+      const faceVis = computeFaceVisibility(shape, camPos);
+      const projected = shape.vertices.map(pt => project3D(pt, w, h, 1.0));
+
+      // 繪製骨架線
+      drawShapeEdges(ctx, shape, projected, faceVis);
+
+      // 依據老師需求：標記待觀察直線時，不先畫垂直記號！純粹標註讓學生觀察
+      if (tab1RevealTTP) {
+        let pO, p1, p2;
+        if (tab1Shape === 'regularCube' || tab1Shape === 'cube') {
+          pO = projected[2]; // B
+          p1 = projected[1]; // C
+          p2 = projected[7]; // E
+        } else if (tab1Shape === 'prism') {
+          pO = projected[2]; // A
+          p1 = projected[1]; // B
+          p2 = projected[3]; // F
+        } else {
+          pO = projected[2]; // B
+          p1 = projected[1]; // C
+          p2 = projected[4]; // P
+        }
+
+        // 紫色目標直線
+        ctx.save();
+        ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.0;
+        ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+        ctx.restore();
+
+        // 紅色空間斜線
+        ctx.save();
+        ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 5.5;
+        ctx.beginPath(); ctx.moveTo(p2.x, p2.y); ctx.lineTo(pO.x, pO.y); ctx.stroke();
+        ctx.restore();
+      }
+
+      // 頂點字母標記
+      projected.forEach((p, i) => {
+        ctx.save();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'italic bold 20px "Cambria Math", serif';
+        ctx.fillText(shape.labels[i], p.x + 9, p.y - 7);
+        ctx.restore();
+      });
+    }
+
+    // ==========================================
+    // TAB 2: 0. 猜測這兩條線有垂直嗎
+    // ==========================================
+    let guessCurrentQIndex = 0;
+    let guessCurrentCat = 'regularCube';
+    let guessFilteredIndices = [];
+    let guessRevealed = false;
+    let guessShowAux = false;
+    let guessUserGuess = null;
+
+    function initGuessQuestions() {
+      setGuessCategory('regularCube');
+    }
+
+    function setGuessCategory(shapeCat) {
+      guessCurrentCat = shapeCat;
+
+      // 更新按鈕外觀 (純淨低調風格，無AI霓虹)
+      document.querySelectorAll('.guess-cat-btn').forEach(btn => {
+        btn.className = 'guess-cat-btn px-2.5 py-1 rounded-md text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition';
+      });
+
+      const activeBtn = document.getElementById('guessCatBtn_' + shapeCat);
+      if (activeBtn) {
+        activeBtn.className = 'guess-cat-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-800 text-white border border-slate-800 shadow-xs transition';
+      }
+
+      // 篩選題目
+      guessFilteredIndices = [];
+      GUESS_QUESTIONS.forEach((q, idx) => {
+        if (shapeCat === 'all' || q.category === shapeCat) {
+          guessFilteredIndices.push(idx);
+        }
+      });
+
+      // 填充選單
+      const sel = document.getElementById('guessQuestionSelect');
+      if (sel) {
+        sel.innerHTML = guessFilteredIndices.map((idx, localIdx) => {
+          const q = GUESS_QUESTIONS[idx];
+          return `<option value="${idx}">題 ${localIdx + 1}：${q.title}</option>`;
+        }).join('');
+      }
+
+      if (guessFilteredIndices.length > 0) {
+        jumpGuessQuestion(guessFilteredIndices[0]);
+      }
+    }
+
+    function jumpGuessQuestion(qIndex) {
+      guessCurrentQIndex = qIndex;
+      guessRevealed = false;
+      guessShowAux = false;
+      guessUserGuess = null;
+
+      const q = GUESS_QUESTIONS[qIndex];
+      const sel = document.getElementById('guessQuestionSelect');
+      if (sel) sel.value = qIndex;
+
+      // 歪斜線提示切換
+      const skewAlert = document.getElementById('guessSkewAlert');
+      if (skewAlert) {
+        if (q.isSkew) skewAlert.classList.remove('hidden');
+        else skewAlert.classList.add('hidden');
+      }
+
+      // 題目卡資訊
+      const badge = document.getElementById('guessQBadge');
+      const localNum = guessFilteredIndices.indexOf(qIndex) + 1;
+      const totalInCat = guessFilteredIndices.length;
+      if (badge) badge.innerText = `${q.categoryName} • 題 ${localNum} / ${totalInCat}`;
+
+      const title = document.getElementById('guessQTitle');
+      if (title) title.innerHTML = q.title;
+
+      const l1 = document.getElementById('guessLine1Name');
+      if (l1) l1.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-red-600 align-middle mr-1"></span>紅線（${q.line1.name}）`;
+
+      const l2 = document.getElementById('guessLine2Name');
+      if (l2) l2.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-purple-600 align-middle mr-1"></span>紫線（${q.line2.name}）`;
+
+      // 切換未揭曉狀態
+      const unrevealedView = document.getElementById('guessUnrevealedView');
+      const revealedView = document.getElementById('guessRevealedView');
+      if (unrevealedView) unrevealedView.classList.remove('hidden');
+      if (revealedView) revealedView.classList.add('hidden');
+
+      resetGuessButtons();
+
+      const auxToggle = document.getElementById('guessAuxToggle');
+      if (auxToggle) auxToggle.checked = false;
+
+      renderGuess();
+    }
+
+    function prevGuessQuestion() {
+      const curPos = guessFilteredIndices.indexOf(guessCurrentQIndex);
+      const nextPos = (curPos <= 0) ? guessFilteredIndices.length - 1 : curPos - 1;
+      jumpGuessQuestion(guessFilteredIndices[nextPos]);
+    }
+
+    function nextGuessQuestion() {
+      const curPos = guessFilteredIndices.indexOf(guessCurrentQIndex);
+      const nextPos = (curPos >= guessFilteredIndices.length - 1) ? 0 : curPos + 1;
+      jumpGuessQuestion(guessFilteredIndices[nextPos]);
+    }
+
+    function randomGuessQuestion() {
+      if (guessFilteredIndices.length <= 1) return;
+      let nextIdx = guessCurrentQIndex;
+      while (nextIdx === guessCurrentQIndex) {
+        const rand = Math.floor(Math.random() * guessFilteredIndices.length);
+        nextIdx = guessFilteredIndices[rand];
+      }
+      jumpGuessQuestion(nextIdx);
+    }
+
+    function resetGuessButtons() {
+      const btnP = document.getElementById('btnGuessPerp');
+      const btnNP = document.getElementById('btnGuessNotPerp');
+      if (btnP) btnP.className = 'py-2.5 px-4 rounded-md text-sm font-bold bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-xs transition flex items-center justify-center';
+      if (btnNP) btnNP.className = 'py-2.5 px-4 rounded-md text-sm font-bold bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-xs transition flex items-center justify-center';
+    }
+
+    function guessPerp(isPerpGuess) {
+      guessUserGuess = isPerpGuess;
+      const btnP = document.getElementById('btnGuessPerp');
+      const btnNP = document.getElementById('btnGuessNotPerp');
+      if (isPerpGuess) {
+        if (btnP) btnP.className = 'py-2.5 px-4 rounded-md text-sm font-bold bg-emerald-700 text-white ring-2 ring-emerald-400 shadow-sm transition flex items-center justify-center';
+        if (btnNP) btnNP.className = 'py-2.5 px-4 rounded-md text-sm font-medium bg-slate-100 text-slate-400 border border-slate-200 transition flex items-center justify-center opacity-50';
+      } else {
+        if (btnNP) btnNP.className = 'py-2.5 px-4 rounded-md text-sm font-bold bg-rose-700 text-white ring-2 ring-rose-400 shadow-sm transition flex items-center justify-center';
+        if (btnP) btnP.className = 'py-2.5 px-4 rounded-md text-sm font-medium bg-slate-100 text-slate-400 border border-slate-200 transition flex items-center justify-center opacity-50';
+      }
+    }
+
+    function revealGuessAnswer() {
+      guessRevealed = true;
+      const q = GUESS_QUESTIONS[guessCurrentQIndex];
+
+      const unrevealedView = document.getElementById('guessUnrevealedView');
+      const revealedView = document.getElementById('guessRevealedView');
+      if (unrevealedView) unrevealedView.classList.add('hidden');
+      if (revealedView) revealedView.classList.remove('hidden');
+
+      const badge = document.getElementById('guessResultBadge');
+      if (badge) {
+        let feedbackHtml = '';
+        if (guessUserGuess !== null) {
+          if (guessUserGuess === q.isPerpendicular) {
+            feedbackHtml = '<span class="text-xs font-semibold text-slate-600 ml-2">✓ 猜測正確！</span>';
+          } else {
+            feedbackHtml = '<span class="text-xs font-semibold text-slate-600 ml-2">（視覺直覺與幾何事實不同）</span>';
+          }
+        }
+
+        const perpTitle = q.isSkew ? '空間中方向垂直（平移夾角 90°）' : '空間中互相垂直（交角 90°）';
+        const notPerpTitle = q.isSkew ? `空間中方向不垂直（平移夾角 ${q.angleDeg}°）` : `空間中不垂直（真實交角 ${q.angleDeg}°）`;
+
+        if (q.isPerpendicular) {
+          badge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-md text-xs sm:text-sm font-bold bg-slate-900 text-white">
+              ✓ ${perpTitle}
+            </span>
+            ${feedbackHtml}
+          `;
+        } else {
+          badge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-md text-xs sm:text-sm font-bold bg-slate-100 text-slate-800 border border-slate-300">
+              ✕ ${notPerpTitle}
+            </span>
+            ${feedbackHtml}
+          `;
+        }
+      }
+
+      const reasonDiv = document.getElementById('guessReasonText');
+      if (reasonDiv) reasonDiv.innerHTML = q.reason;
+
+      const trapSpan = document.getElementById('guessTrapContent');
+      if (trapSpan) trapSpan.innerHTML = q.trapInsight;
+
+      if (window.renderMathInElement) {
+        renderMathInElement(revealedView, {
+          delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+          throwOnError: false
+        });
+      }
+
+      renderGuess();
+    }
+
+    function hideGuessAnswer() {
+      guessRevealed = false;
+      const unrevealedView = document.getElementById('guessUnrevealedView');
+      const revealedView = document.getElementById('guessRevealedView');
+      if (unrevealedView) unrevealedView.classList.remove('hidden');
+      if (revealedView) revealedView.classList.add('hidden');
+      renderGuess();
+    }
+
+    function toggleGuessAux(checked) {
+      guessShowAux = checked;
+      renderGuess();
+    }
+
+    function renderGuess() {
+      const canvas = document.getElementById('canvasGuess');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const q = GUESS_QUESTIONS[guessCurrentQIndex];
+      if (!q) return;
+      const shape = SHAPES_DATA[q.shape];
+      if (!shape) return;
+
+      const camPos = getCameraWorldPos();
+      const faceVis = computeFaceVisibility(shape, camPos);
+      const projected = shape.vertices.map(pt => project3D(pt, w, h, 1.0));
+
+      // 若有地平面 (如鋼琴) 則先畫基底平面
+      if (shape.isGroundPlane && shape.groundCorners) {
+        const pPlane = shape.groundCorners.map(pt => project3D(pt, w, h, 1.0));
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(pPlane[0].x, pPlane[0].y);
+        pPlane.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(241, 245, 249, 0.85)';
+        ctx.fill();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 繪製基本骨架線
+      drawShapeEdges(ctx, shape, projected, faceVis);
+
+      // 輔助線 (若揭曉且開啟)
+      if (guessRevealed && guessShowAux && q.auxLines) {
+        q.auxLines.forEach(aux => {
+          const p1 = projected[aux.start];
+          const p2 = projected[aux.end];
+          ctx.save();
+          ctx.strokeStyle = aux.color || '#0284c7';
+          ctx.lineWidth = 3.0;
+          ctx.setLineDash([6, 5]);
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+
+      // 待觀察直線 2 (紫色)
+      const pL2_s = projected[q.line2.start];
+      const pL2_e = projected[q.line2.end];
+      ctx.save();
+      ctx.strokeStyle = '#7c3aed';
+      ctx.lineWidth = 5.0;
+      ctx.beginPath();
+      ctx.moveTo(pL2_s.x, pL2_s.y);
+      ctx.lineTo(pL2_e.x, pL2_e.y);
+      ctx.stroke();
+      ctx.restore();
+
+      // 待觀察直線 1 (紅色空間斜線)
+      const pL1_s = projected[q.line1.start];
+      const pL1_e = projected[q.line1.end];
+      ctx.save();
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 5.5;
+      ctx.beginPath();
+      ctx.moveTo(pL1_s.x, pL1_s.y);
+      ctx.lineTo(pL1_e.x, pL1_e.y);
+      ctx.stroke();
+      ctx.restore();
+
+      // 垂直記號或角度弧線：嚴格遵守老師指示，只有揭曉後才繪製！
+      if (guessRevealed) {
+        if (q.isPerpendicular && q.rightAngle) {
+          const vO = shape.vertices[q.rightAngle.vertex];
+          const v1 = shape.vertices[q.rightAngle.arm1];
+          const v2 = shape.vertices[q.rightAngle.arm2];
+          draw3DRightAngle(ctx, vO, v1, v2, w, h, 0.28, '#059669');
+        } else if (!q.isPerpendicular && !q.isSkew && q.intersectVertex) {
+          // 繪製非垂直弧線
+          const ivIdx = (q.line1.start === q.line2.start || q.line1.start === q.line2.end) ? q.line1.start : q.line1.end;
+          const pO = projected[ivIdx];
+          const other1 = (q.line1.start === ivIdx) ? projected[q.line1.end] : projected[q.line1.start];
+          const other2 = (q.line2.start === ivIdx) ? projected[q.line2.end] : projected[q.line2.start];
+          
+          const a1 = Math.atan2(other1.y - pO.y, other1.x - pO.x);
+          const a2 = Math.atan2(other2.y - pO.y, other2.x - pO.x);
+          ctx.save();
+          ctx.strokeStyle = '#e11d48';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(pO.x, pO.y, 24, a1, a2, Math.abs(a2 - a1) > Math.PI);
+          ctx.stroke();
+          ctx.fillStyle = '#e11d48';
+          ctx.font = 'bold 13px sans-serif';
+          ctx.fillText(`${q.angleDeg}°`, pO.x + 28, pO.y - 10);
+          ctx.restore();
+        }
+      }
+
+      // 頂點字母標記
+      const activeVerts = new Set([q.line1.start, q.line1.end, q.line2.start, q.line2.end]);
+      if (guessRevealed && guessShowAux && q.auxLines) {
+        q.auxLines.forEach(aux => { activeVerts.add(aux.start); activeVerts.add(aux.end); });
+      }
+
+      projected.forEach((p, i) => {
+        if (!shape.labels[i]) return;
+        if (i >= 5 && q.shape === 'pyramid' && !activeVerts.has(i)) return;
+
+        const isIntersectPoint = (q.rightAngle && q.rightAngle.vertex === i) || 
+                                 (!q.isSkew && ((q.line1.start === i || q.line1.end === i) && (q.line2.start === i || q.line2.end === i)));
+
+        ctx.save();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, isIntersectPoint ? 7.0 : 5.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = isIntersectPoint ? '#dc2626' : '#0f172a';
+        ctx.lineWidth = isIntersectPoint ? 3.0 : 2.0;
+        ctx.stroke();
+
+        ctx.fillStyle = isIntersectPoint ? '#dc2626' : '#0f172a';
+        ctx.font = isIntersectPoint ? 'italic 900 22px "Cambria Math", serif' : 'italic bold 20px "Cambria Math", serif';
+        ctx.fillText(shape.labels[i], p.x + 9, p.y - 7);
+        ctx.restore();
+      });
+    }
+
+
+// ==========================================
+    // TAB 2: 定理標準定義 (線面雙垂直記號)
+    // ==========================================
+    function renderTab2() {
+      const canvas = document.getElementById('canvasTab2');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 定義基底平面 E 頂點
+      const planeY = -0.9;
+      const pPlane = [
+        [-2.4, planeY, -1.8], [ 2.4, planeY, -1.8], [ 2.0, planeY,  1.8], [-2.8, planeY,  1.8]
+      ].map(pt => project3D(pt, w, h, 1.0));
+
+      // 繪製半透明基底平面 E
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(pPlane[0].x, pPlane[0].y);
+      pPlane.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(241, 245, 249, 0.75)';
+      ctx.fill();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+      ctx.fillStyle = '#475569';
+      ctx.font = 'italic bold 24px "Cambria Math", serif';
+      ctx.fillText('E', pPlane[3].x + 22, pPlane[3].y - 20);
+      ctx.restore();
+
+      // 關鍵幾何點（100% 對齊課本第 132 頁圖 19、圖 20：頂點 A、底面垂足 B、直線垂足 C、線上點 D）
+      const vA = [-0.6, 1.4, 0.2];      // 頂點 A
+      const vB = [-0.6, planeY, 0.2];   // 平面垂足 B
+      const vC = [ 0.8, planeY, 0.2];   // 直線 L 上垂足 C
+      const vD = [ 0.8, planeY, 1.1];   // 直線 L 上另一點 D (課本圖 19)
+      const vL1 = [ 0.8, planeY, -1.4]; // 直線 L 遠端
+      const vL2 = [ 0.8, planeY,  1.7]; // 直線 L 近端
+
+      // 投影
+      const pA = project3D(vA, w, h, 1.0);
+      const pB = project3D(vB, w, h, 1.0);
+      const pC = project3D(vC, w, h, 1.0);
+      const pD = project3D(vD, w, h, 1.0);
+      const pL1 = project3D(vL1, w, h, 1.0);
+      const pL2 = project3D(vL2, w, h, 1.0);
+
+      // 目標直線 L (紫色，三維精確垂直 BC)
+      ctx.save();
+      ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 3.5;
+      ctx.beginPath(); ctx.moveTo(pL1.x, pL1.y); ctx.lineTo(pL2.x, pL2.y); ctx.stroke();
+      ctx.fillStyle = '#7c3aed'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+      ctx.fillText('L', pL2.x + 8, pL2.y);
+      ctx.restore();
+
+      // 課本圖 19 證明輔助線 BD 與 AD (虛線)
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.6; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pD.x, pD.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pD.x, pD.y); ctx.stroke();
+      ctx.restore();
+
+      // 條件 1: 藍色立柱 AB ⟂ 平面 E
+      ctx.save();
+      ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.0;
+      ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke();
+      ctx.restore();
+
+      // 條件 2: 綠色地面垂線 BC ⟂ L
+      ctx.save();
+      ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.0;
+      ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.stroke();
+      ctx.restore();
+
+      // 結論 3: 紅色空間斜線 AC ⟂ L
+      ctx.save();
+      ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 5.5;
+      ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.stroke();
+      ctx.restore();
+
+      // 直線垂直平面：通過 B 點畫橫向平行於 L 的輔助虛線，呈現雙垂直記號
+      const vAuxZ1 = [vB[0], planeY, vB[2] - 0.7];
+      const vAuxZ2 = [vB[0], planeY, vB[2] + 0.7];
+      const pAuxZ1 = project3D(vAuxZ1, w, h, 1.0);
+      const pAuxZ2 = project3D(vAuxZ2, w, h, 1.0);
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(pAuxZ1.x, pAuxZ1.y); ctx.lineTo(pAuxZ2.x, pAuxZ2.y); ctx.stroke();
+      ctx.restore();
+
+      // 1. 立柱 AB ⟂ 底面直線 BC
+      draw3DRightAngle(ctx, vB, vA, vC, w, h, 0.20, '#2563eb', 1.0);
+      // 2. 立柱 AB ⟂ 底面橫向參考線
+      draw3DRightAngle(ctx, vB, vA, vAuxZ2, w, h, 0.20, '#2563eb', 1.0);
+
+      // 地面垂線垂直記號 BC ⟂ L (綠色，面朝 L1 方向)
+      draw3DRightAngle(ctx, vC, vB, vL1, w, h, 0.20, '#059669', 1.0);
+
+      // 結論空間垂線垂直記號 AC ⟂ L (紅色，同朝 L1 方向)
+      draw3DRightAngle(ctx, vC, vA, vL1, w, h, 0.20, '#dc2626', 1.0);
+
+      // 頂點字母 (A, B, C, D 完全符合課本圖 19)
+      [
+        { p: pA, label: 'A' },
+        { p: pB, label: 'B' },
+        { p: pC, label: 'C' },
+        { p: pD, label: 'D' }
+      ].forEach(item => {
+        ctx.save();
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(item.p.x, item.p.y, 6.0, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+        ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 22px "Cambria Math", serif';
+        ctx.fillText(item.label, item.p.x + 9, item.p.y - 7);
+        ctx.restore();
+      });
+    }
+
+    // ==========================================
+    // TAB 3: 練習證明 (教師手冊例題、隨堂練習、習題與經典幾何)
+    // ==========================================
+    let tab3Model = 'book_ex4';
+    let tab3Revealed = { 1: false, 2: false, 3: false };
+    let tab3AnswersShown = false;
+
+    // 錐體數據 (P 點立在 A 點正上方)
+    const PYR_SINGLE_DATA = {
+      vertices: [
+        [-1.3, -1.0,  1.1], // 0: A
+        [ 1.3, -1.0,  1.1], // 1: B
+        [ 1.3, -1.0, -1.1], // 2: C
+        [-1.3, -1.0, -1.1], // 3: D
+        [-1.3,  1.3,  1.1]  // 4: P
+      ],
+      labels: ['A', 'B', 'C', 'D', 'P'],
+      faces: [
+        [3, 2, 1, 0], // 0: 底面
+        [0, 1, 4],    // 1: 前面
+        [1, 2, 4],    // 2: 右面
+        [2, 3, 4],    // 3: 後面
+        [3, 0, 4]     // 4: 左面
+      ],
+      edges: [
+        { v: [0, 1], f: [0, 1] }, { v: [1, 2], f: [0, 2] }, { v: [2, 3], f: [0, 3] }, { v: [3, 0], f: [0, 4] },
+        { v: [0, 4], f: [1, 4] }, { v: [1, 4], f: [1, 2] }, { v: [2, 4], f: [2, 3] }, { v: [3, 4], f: [3, 4] }
+      ]
+    };
+
+    const TAB3_CONFIGS = {
+      book_ex4: {
+        title: '【例 4】標準空間方位垂線證明',
+        targetLatex: '\\overline{AC} \\perp \\overline{CD}',
+        slantName: 'AC',
+        targetLineName: 'CD',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{AB} \\perp \\text{平面 } E$</span>（線段 AB 垂直平面 E 於 B 點）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{BC} \\perp \\overline{CD}$</span>（平面 E 上直線 BC 垂直直線 CD）</div>
+        `,
+        basePlane: 'E',
+        targetLine: '\\overline{CD}',
+        ans: ['AB', 'BC', 'AC']
+      },
+      book_hw4: {
+        title: '【類題 4】反求立柱三垂線證明',
+        targetLatex: '\\overline{OB} \\perp \\overline{BC}',
+        slantName: 'OB',
+        targetLineName: 'BC',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{OA} \\perp \\text{平面 } E$</span>（點 O 在平面 E 之投影點為 A）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{AB} \\perp L$</span>（點 A 在直線 L 上之投影點為 B）</div>
+        `,
+        basePlane: 'E',
+        targetLine: '\\text{直線 } L',
+        ans: ['OA', 'AB', 'OB']
+      },
+      book_ex5: {
+        title: '【例 5】鋼琴頂蓋模型證明',
+        targetLatex: '\\overline{AC} \\perp \\overline{CD}',
+        slantName: 'AC',
+        targetLineName: 'CD',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{AB} \\perp \\text{頂蓋平面}$</span>（支撐架 AB 垂直頂蓋於 B 點）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{BC} \\perp \\overline{CD}$</span>（頂蓋鉸鍊鎖孔線 BC 垂直 CD）</div>
+        `,
+        basePlane: '\\text{頂蓋}',
+        targetLine: '\\overline{CD}',
+        ans: ['AB', 'BC', 'AC']
+      },
+      book_exercise: {
+        title: '【習題 2】建物道路模型證明',
+        targetLatex: '\\overline{PR} \\perp \\overline{RO}',
+        slantName: 'PR',
+        targetLineName: 'RO',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{PQ} \\perp \\text{地面}$</span>（建物垂直豎立於地面於 Q 點）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{QR} \\perp \\text{道路 } RO$</span>（地面垂直線 QR 垂直道路）</div>
+        `,
+        basePlane: '\\text{地面}',
+        targetLine: '\\text{道路 } \\overline{RO}',
+        ans: ['PQ', 'QR', 'PR']
+      },
+      cuboid: {
+        title: '【長方體模型】體對角面垂直證明',
+        targetLatex: '\\overline{EB} \\perp \\overline{BC}',
+        slantName: 'EB',
+        targetLineName: 'BC',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{EA} \\perp \\text{底面 } ABCD$</span>（垂直側稜垂直底面）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{AB} \\perp \\overline{BC}$</span>（底面矩形邊長垂直）</div>
+        `,
+        basePlane: 'ABCD',
+        targetLine: '\\overline{BC}',
+        ans: ['EA', 'AB', 'EB']
+      },
+      diagonal: {
+        title: '【面對角線模型】垂線證明（統測高頻）',
+        targetLatex: '\\overline{HK} \\perp \\overline{AC}',
+        slantName: 'HK',
+        targetLineName: 'AC',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{HD} \\perp \\text{底面 } ABCD$</span>（垂直側稜垂直底面）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{DK} \\perp \\overline{AC}$</span>（由垂足 D 向對角線作垂線）</div>
+        `,
+        basePlane: 'ABCD',
+        targetLine: '\\text{對角線 } \\overline{AC}',
+        ans: ['HD', 'DK', 'HK']
+      },
+      pyramid: {
+        title: '【四角錐模型】空間斜線垂直證明',
+        targetLatex: '\\overline{PB} \\perp \\overline{BC}',
+        slantName: 'PB',
+        targetLineName: 'BC',
+        givenHtml: `
+          <div>● 已知條件 1：<span class="text-blue-700 font-black">$\\overline{PA} \\perp \\text{底面 } ABCD$</span>（稜線 PA 垂直底面）</div>
+          <div>● 已知條件 2：<span class="text-emerald-700 font-black">$\\overline{AB} \\perp \\overline{BC}$</span>（底面矩形邊長垂直）</div>
+        `,
+        basePlane: 'ABCD',
+        targetLine: '\\overline{BC}',
+        ans: ['PA', 'AB', 'PB']
+      }
+    };
+
+    function setTab3Model(modelKey) {
+      tab3Model = modelKey;
+      tab3Revealed = { 1: false, 2: false, 3: false };
+      tab3AnswersShown = false;
+
+      ['book_ex4', 'book_hw4', 'book_ex5', 'book_exercise', 'cuboid', 'diagonal', 'pyramid'].forEach(m => {
+        const btn = document.getElementById('btnTab3Model_' + m);
+        if (btn) {
+          btn.className = (m === modelKey)
+            ? 'px-2.5 py-1 rounded-md text-xs font-bold bg-blue-700 text-white shadow-xs'
+            : 'px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50';
+        }
+      });
+
+      const cfg = TAB3_CONFIGS[modelKey];
+      document.getElementById('tab3CardTitle').innerText = cfg.title;
+      document.getElementById('tab3GoalTarget').innerHTML = `$${cfg.targetLatex}$`;
+      document.getElementById('tab3GivenConditions').innerHTML = cfg.givenHtml;
+      document.getElementById('tab3BaseText').innerHTML = `$\\perp$ 平面 $${cfg.basePlane}$`;
+      document.getElementById('tab3TargetText').innerHTML = `$\\perp$ 目標直線 $${cfg.targetLine}$`;
+      document.getElementById('tab3ConclusionText').innerHTML = `$\\perp$ 目標直線 $${cfg.targetLine}$`;
+
+      document.getElementById('tab3CanvasGoalBadge').innerHTML = `
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-bold">
+          空間斜線 $\\overline{${cfg.slantName}}$
+        </span>
+        <span class="font-black text-slate-400">$\\perp$</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 font-bold">
+          目標直線 $\\overline{${cfg.targetLineName}}$
+        </span>
+      `;
+
+      updateTab3BlanksUI();
+      renderAllMath(document.getElementById('tabContent4'));
+      renderTab3();
+    }
+
+    function revealBlank(step) {
+      tab3Revealed[step] = !tab3Revealed[step];
+      updateTab3BlanksUI();
+      renderTab3();
+    }
+
+    function toggleTab3Answers() {
+      tab3AnswersShown = !tab3AnswersShown;
+      tab3Revealed[1] = tab3AnswersShown;
+      tab3Revealed[2] = tab3AnswersShown;
+      tab3Revealed[3] = tab3AnswersShown;
+      updateTab3BlanksUI();
+      renderTab3();
+    }
+
+    function updateTab3BlanksUI() {
+      const cfg = TAB3_CONFIGS[tab3Model];
+
+      document.getElementById('tab3Blank1').innerHTML = tab3Revealed[1] ? `$\\overline{${cfg.ans[0]}}$` : '？';
+      document.getElementById('tab3Blank2').innerHTML = tab3Revealed[2] ? `$\\overline{${cfg.ans[1]}}$` : '？';
+      document.getElementById('tab3Blank3').innerHTML = tab3Revealed[3] ? `$\\overline{${cfg.ans[2]}}$` : '？';
+
+      document.getElementById('tab3Blank1').className = tab3Revealed[1]
+        ? 'px-4 py-1 rounded-lg bg-blue-600 text-white font-mono text-base font-black min-w-[65px] text-center shadow-xs'
+        : 'cursor-pointer px-4 py-1 rounded-lg border-2 border-dashed border-blue-400 bg-blue-50 font-mono text-blue-700 text-base font-black min-w-[65px] text-center hover:bg-blue-100 transition';
+      
+      document.getElementById('tab3Blank2').className = tab3Revealed[2]
+        ? 'px-4 py-1 rounded-lg bg-emerald-600 text-white font-mono text-base font-black min-w-[65px] text-center shadow-xs'
+        : 'cursor-pointer px-4 py-1 rounded-lg border-2 border-dashed border-emerald-400 bg-emerald-50 font-mono text-emerald-700 text-base font-black min-w-[65px] text-center hover:bg-emerald-100 transition';
+      
+      document.getElementById('tab3Blank3').className = tab3Revealed[3]
+        ? 'px-4 py-1 rounded-lg bg-rose-600 text-white font-mono text-base font-black min-w-[65px] text-center shadow-xs'
+        : 'cursor-pointer px-4 py-1 rounded-lg border-2 border-dashed border-rose-400 bg-rose-50 font-mono text-rose-700 text-base font-black min-w-[65px] text-center hover:bg-rose-100 transition';
+
+      const banner = document.getElementById('tab3ResultBanner');
+      if (tab3Revealed[3]) {
+        banner.classList.remove('hidden');
+        document.getElementById('tab3ResultText').innerHTML = `由三垂線定理得證：$\\overline{${cfg.ans[2]}} \\perp \\overline{${cfg.targetLineName}}$`;
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      renderAllMath(document.getElementById('tabContent4'));
+    }
+    function renderTab3() {
+      const canvas = document.getElementById('canvasTab3');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+      const camPos = getCameraWorldPos();
+
+      if (tab3Model === 'book_ex4' || tab3Model === 'book_hw4' || tab3Model === 'book_ex5' || tab3Model === 'book_exercise') {
+        const planeY = -0.85;
+        const vG1 = [-1.7, planeY, -1.4], vG2 = [ 1.7, planeY, -1.4];
+        const vG3 = [ 1.7, planeY,  1.5], vG4 = [-1.7, planeY,  1.5];
+
+        const pG1 = project3D(vG1, w, h, 1.0), pG2 = project3D(vG2, w, h, 1.0);
+        const pG3 = project3D(vG3, w, h, 1.0), pG4 = project3D(vG4, w, h, 1.0);
+
+        // 平面 E
+        ctx.save();
+        ctx.fillStyle = 'rgba(241, 245, 249, 0.75)';
+        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(pG1.x, pG1.y); ctx.lineTo(pG2.x, pG2.y); ctx.lineTo(pG3.x, pG3.y); ctx.lineTo(pG4.x, pG4.y);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#64748b'; ctx.font = 'italic bold 18px "Cambria Math", serif';
+        ctx.fillText('E', pG4.x + 14, pG4.y - 12);
+        ctx.restore();
+
+        // 頂點座標
+        const vFoot = [-0.6, planeY, 0.0];
+        const vTop  = [-0.6, 1.25, 0.0];
+        const vCorner = [ 0.7, planeY, 0.0];
+        const vL1 = [ 0.7, planeY, -1.3];
+        const vL2 = [ 0.7, planeY,  1.5];
+        const vPointOnL = [ 0.7, planeY, 1.1];
+
+        const pFoot = project3D(vFoot, w, h, 1.0);
+        const pTop = project3D(vTop, w, h, 1.0);
+        const pCorner = project3D(vCorner, w, h, 1.0);
+        const pL1 = project3D(vL1, w, h, 1.0);
+        const pL2 = project3D(vL2, w, h, 1.0);
+        const pPointOnL = project3D(vPointOnL, w, h, 1.0);
+
+        // 目標直線 L (紫色)
+        ctx.save();
+        ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.0;
+        ctx.beginPath(); ctx.moveTo(pL1.x, pL1.y); ctx.lineTo(pL2.x, pL2.y); ctx.stroke();
+        ctx.fillStyle = '#7c3aed'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+        ctx.fillText(tab3Model === 'book_exercise' ? '道路' : 'L', pL2.x + 8, pL2.y);
+        ctx.restore();
+
+        // 條件 1: 藍色立柱
+        ctx.save();
+        ctx.strokeStyle = tab3Revealed[1] ? '#2563eb' : '#94a3b8';
+        ctx.lineWidth = tab3Revealed[1] ? 5.5 : 2.5;
+        ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pFoot.x, pFoot.y); ctx.stroke();
+        ctx.restore();
+
+        // 條件 2: 綠色地面垂線
+        ctx.save();
+        ctx.strokeStyle = tab3Revealed[2] ? '#059669' : '#94a3b8';
+        ctx.lineWidth = tab3Revealed[2] ? 5.5 : 2.5;
+        ctx.beginPath(); ctx.moveTo(pFoot.x, pFoot.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.stroke();
+        ctx.restore();
+
+        // 結論 3: 紅色空間斜線
+        if (!tab3Revealed[3]) {
+          ctx.save();
+          ctx.setLineDash([7, 5]); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 4.0;
+          ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.stroke();
+          ctx.restore();
+        } else {
+          ctx.save();
+          ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 6.5;
+          ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.stroke();
+          ctx.restore();
+          draw3DRightAngle(ctx, vCorner, vTop, vL1, w, h, 0.22, '#dc2626', 1.0);
+        }
+
+        // 已知直角標記
+        const cPillar = tab3Revealed[1] ? '#2563eb' : '#94a3b8';
+        const cGround = tab3Revealed[2] ? '#059669' : '#94a3b8';
+        draw3DRightAngle(ctx, vFoot, vTop, vCorner, w, h, 0.20, cPillar, 1.0);
+        draw3DRightAngle(ctx, vCorner, vFoot, vL1, w, h, 0.20, cGround, 1.0);
+
+        // 頂點字母配置
+        let labels = [
+          { p: pTop, label: 'A' }, { p: pFoot, label: 'B' }, { p: pCorner, label: 'C' }, { p: pPointOnL, label: 'D' }
+        ];
+        if (tab3Model === 'book_hw4') {
+          labels = [
+            { p: pTop, label: 'O' }, { p: pFoot, label: 'A' }, { p: pCorner, label: 'B' }, { p: pPointOnL, label: 'C' }
+          ];
+        } else if (tab3Model === 'book_exercise') {
+          labels = [
+            { p: pTop, label: 'P' }, { p: pFoot, label: 'Q' }, { p: pCorner, label: 'R' }, { p: pPointOnL, label: 'O' }
+          ];
+        }
+
+        labels.forEach(item => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(item.p.x, item.p.y, 6.0, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 21px "Cambria Math", serif';
+          ctx.fillText(item.label, item.p.x + 9, item.p.y - 7);
+          ctx.restore();
+        });
+
+      } else if (tab3Model === 'cuboid' || tab3Model === 'diagonal') {
+        const shape = SHAPES_DATA.cube;
+        const faceVis = computeFaceVisibility(shape, camPos);
+        const projected = shape.vertices.map(pt => project3D(pt, w, h, 1.0));
+
+        drawShapeEdges(ctx, shape, projected, faceVis);
+
+        const vD = shape.vertices[0], vC = shape.vertices[1], vB = shape.vertices[2], vA = shape.vertices[3];
+        const vH = shape.vertices[4], vE = shape.vertices[7];
+        const pD = projected[0], pC = projected[1], pB = projected[2], pA = projected[3];
+        const pH = projected[4], pE = projected[7];
+
+        if (tab3Model === 'cuboid') {
+          const cPillar = tab3Revealed[1] ? '#2563eb' : '#94a3b8';
+          const cGround = tab3Revealed[2] ? '#059669' : '#94a3b8';
+          draw3DRightAngle(ctx, vA, vE, vB, w, h, 0.20, cPillar);
+          draw3DRightAngle(ctx, vA, vE, vD, w, h, 0.20, cPillar);
+          draw3DRightAngle(ctx, vB, vA, vC, w, h, 0.20, cGround);
+
+          ctx.save();
+          ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.5;
+          ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.stroke();
+          ctx.restore();
+
+          if (!tab3Revealed[3]) {
+            ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 4.2;
+            ctx.beginPath(); ctx.moveTo(pE.x, pE.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+          } else {
+            ctx.save(); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 6.5;
+            ctx.beginPath(); ctx.moveTo(pE.x, pE.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+            draw3DRightAngle(ctx, vB, vE, vC, w, h, 0.24, '#dc2626');
+          }
+
+          if (tab3Revealed[1]) {
+            ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.5;
+            ctx.beginPath(); ctx.moveTo(pE.x, pE.y); ctx.lineTo(pA.x, pA.y); ctx.stroke(); ctx.restore();
+          }
+          if (tab3Revealed[2]) {
+            ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.5;
+            ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+          }
+
+        } else {
+          // 面對角線模型
+          const wSide = 3.2, dSide = 2.2;
+          const tParam = (dSide * dSide) / (wSide * wSide + dSide * dSide);
+          const vK = [vA[0] + tParam * wSide, vA[1], vA[2] - tParam * dSide];
+          const pK = project3D(vK, w, h, 1.0);
+
+          const cPillar = tab3Revealed[1] ? '#2563eb' : '#94a3b8';
+          const cGround = tab3Revealed[2] ? '#059669' : '#94a3b8';
+          draw3DRightAngle(ctx, vD, vH, vA, w, h, 0.20, cPillar);
+          draw3DRightAngle(ctx, vD, vH, vC, w, h, 0.20, cPillar);
+          draw3DRightAngle(ctx, vK, vD, vC, w, h, 0.20, cGround);
+
+          ctx.save(); ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.5;
+          ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+
+          if (!tab3Revealed[3]) {
+            ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 4.2;
+            ctx.beginPath(); ctx.moveTo(pH.x, pH.y); ctx.lineTo(pK.x, pK.y); ctx.stroke(); ctx.restore();
+          } else {
+            ctx.save(); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 6.5;
+            ctx.beginPath(); ctx.moveTo(pH.x, pH.y); ctx.lineTo(pK.x, pK.y); ctx.stroke(); ctx.restore();
+            draw3DRightAngle(ctx, vK, vH, vC, w, h, 0.24, '#dc2626');
+          }
+
+          ctx.save();
+          ctx.strokeStyle = tab3Revealed[2] ? '#059669' : '#94a3b8'; ctx.lineWidth = tab3Revealed[2] ? 5.5 : 2.0;
+          ctx.beginPath(); ctx.moveTo(pD.x, pD.y); ctx.lineTo(pK.x, pK.y); ctx.stroke(); ctx.restore();
+
+          if (tab3Revealed[1]) {
+            ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.5;
+            ctx.beginPath(); ctx.moveTo(pH.x, pH.y); ctx.lineTo(pD.x, pD.y); ctx.stroke(); ctx.restore();
+          }
+
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(pK.x, pK.y, 5.5, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+          ctx.fillText('K', pK.x + 8, pK.y - 7);
+          ctx.restore();
+        }
+
+        projected.forEach((p, i) => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+          ctx.fillText(shape.labels[i], p.x + 9, p.y - 7);
+          ctx.restore();
+        });
+
+      } else if (tab3Model === 'pyramid') {
+        const shape = PYR_SINGLE_DATA;
+        const faceVis = computeFaceVisibility(shape, camPos);
+        const projected = shape.vertices.map(pt => project3D(pt, w, h, 1.0));
+
+        drawShapeEdges(ctx, shape, projected, faceVis);
+
+        const vA = shape.vertices[0], vB = shape.vertices[1], vC = shape.vertices[2], vD = shape.vertices[3], vP = shape.vertices[4];
+        const pA = projected[0], pB = projected[1], pC = projected[2], pD = projected[3], pP = projected[4];
+
+        const cPillar = tab3Revealed[1] ? '#2563eb' : '#94a3b8';
+        const cGround = tab3Revealed[2] ? '#059669' : '#94a3b8';
+        draw3DRightAngle(ctx, vA, vP, vB, w, h, 0.20, cPillar);
+        draw3DRightAngle(ctx, vA, vP, vD, w, h, 0.20, cPillar);
+        draw3DRightAngle(ctx, vB, vA, vC, w, h, 0.20, cGround);
+
+        ctx.save(); ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.5;
+        ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+
+        if (!tab3Revealed[3]) {
+          ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 4.2;
+          ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+        } else {
+          ctx.save(); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 6.5;
+          ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+          draw3DRightAngle(ctx, vB, vP, vC, w, h, 0.24, '#dc2626');
+        }
+
+        if (tab3Revealed[1]) {
+          ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.5;
+          ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pA.x, pA.y); ctx.stroke(); ctx.restore();
+        }
+        if (tab3Revealed[2]) {
+          ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.5;
+          ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+        }
+
+        projected.forEach((p, i) => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+          ctx.fillText(shape.labels[i], p.x + 9, p.y - 7);
+          ctx.restore();
+        });
+      }
+    }
+
+    // ==========================================
+    // TAB 4: 空間距離計算 (教師手冊例題、隨堂、習題、統測題)
+    // ==========================================
+    let tab4Model = 'book_ex4';
+    let tab4ExerciseSolutionShown = false;
+
+    // 平面直角三角形 SVG 生成器 (立體抽離後之乾淨平面圖)
+    function renderRightTriangleSvg(tName, oName, hName, legVLen, legHLen, hypLen, legVColor, legHColor, hypColor) {
+      return `
+        <svg viewBox="0 0 160 105" class="w-full h-24 max-h-28 overflow-visible select-none">
+          <polygon points="32,82 32,22 138,82" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+          
+          <!-- 直角方塊 -->
+          <polyline points="32,70 44,70 44,82" fill="none" stroke="#64748b" stroke-width="1.6"/>
+          <rect x="33" y="71" width="10" height="10" fill="#f1f5f9"/>
+
+          <!-- 兩股與斜邊 -->
+          <line x1="32" y1="82" x2="32" y2="22" stroke="${legVColor}" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="82" x2="138" y2="82" stroke="${legHColor}" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="22" x2="138" y2="82" stroke="${hypColor}" stroke-width="3" stroke-linecap="round"/>
+
+          <!-- 頂點圓點與字母 -->
+          <circle cx="32" cy="22" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="32" y="14" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${tName}</text>
+
+          <circle cx="32" cy="82" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="20" y="94" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${oName}</text>
+
+          <circle cx="138" cy="82" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="148" y="94" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${hName}</text>
+
+          <!-- 邊長標籤 -->
+          <text x="18" y="55" font-family="sans-serif" font-weight="bold" font-size="12" fill="${legVColor}" text-anchor="middle">${legVLen}</text>
+          <text x="85" y="98" font-family="sans-serif" font-weight="bold" font-size="12" fill="${legHColor}" text-anchor="middle">${legHLen}</text>
+          <text x="94" y="46" font-family="sans-serif" font-weight="bold" font-size="12" fill="${hypColor}" text-anchor="middle">${hypLen}</text>
+        </svg>
+      `;
+    }
+
+    // 面對角線求高專用 SVG 生成器 (△ADC 與斜邊上的高 DK)
+    function renderAltitudeTriangleSvg(tName, oName, hName, fName, legVLen, legHLen, hypLen, altLen, legVColor, legHColor, hypColor, altColor) {
+      return `
+        <svg viewBox="0 0 160 105" class="w-full h-24 max-h-28 overflow-visible select-none">
+          <polygon points="32,82 32,22 138,82" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+          <polyline points="32,70 44,70 44,82" fill="none" stroke="#64748b" stroke-width="1.6"/>
+          <polyline points="63,39 60,45 54,42" fill="none" stroke="#059669" stroke-width="1.6"/>
+
+          <line x1="32" y1="82" x2="32" y2="22" stroke="${legVColor}" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="82" x2="138" y2="82" stroke="${legHColor}" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="22" x2="138" y2="82" stroke="${hypColor}" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="82" x2="57" y2="36" stroke="${altColor}" stroke-width="2.6" stroke-dasharray="4,2"/>
+
+          <circle cx="32" cy="22" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="32" y="14" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${tName}</text>
+
+          <circle cx="32" cy="82" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="20" y="94" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${oName}</text>
+
+          <circle cx="138" cy="82" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="148" y="94" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${hName}</text>
+
+          <circle cx="57" cy="36" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="58" y="24" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${fName}</text>
+
+          <text x="18" y="55" font-family="sans-serif" font-weight="bold" font-size="12" fill="${legVColor}" text-anchor="middle">${legVLen}</text>
+          <text x="85" y="98" font-family="sans-serif" font-weight="bold" font-size="12" fill="${legHColor}" text-anchor="middle">${legHLen}</text>
+          <text x="105" y="44" font-family="sans-serif" font-weight="bold" font-size="12" fill="${hypColor}" text-anchor="middle">${hypLen}</text>
+          <text x="50" y="66" font-family="sans-serif" font-weight="bold" font-size="12" fill="${altColor}" text-anchor="middle">${altLen}</text>
+        </svg>
+      `;
+    }
+
+    // 圓直徑專用 SVG 生成器 (112 統測露營題 △BCD 圓周角直角)
+    function renderCircleChordTriangleSvg(cName, dName, bName, chordLen, baseLen, hypLen) {
+      return `
+        <svg viewBox="0 0 160 105" class="w-full h-24 max-h-28 overflow-visible select-none">
+          <!-- 圓周輔助弧 -->
+          <path d="M 18,82 A 65,65 0 0,1 142,82" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <polygon points="18,82 68,26 142,82" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+          
+          <!-- 直角 D 標記 (圓周角 = 90°) -->
+          <polyline points="63,32 69,38 74,32" fill="none" stroke="#059669" stroke-width="1.6"/>
+
+          <!-- 弦線與直徑邊 -->
+          <line x1="18" y1="82" x2="68" y2="26" stroke="#059669" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="68" y1="26" x2="142" y2="82" stroke="#7c3aed" stroke-width="3" stroke-linecap="round"/>
+          <line x1="18" y1="82" x2="142" y2="82" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+
+          <circle cx="18" cy="82" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="10" y="94" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${cName}</text>
+
+          <circle cx="68" cy="26" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="68" y="16" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${dName}</text>
+
+          <circle cx="142" cy="82" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+          <text x="150" y="94" font-family="'Cambria Math', serif" font-style="italic" font-weight="bold" font-size="14" fill="#0f172a" text-anchor="middle">${bName}</text>
+
+          <text x="80" y="98" font-family="sans-serif" font-weight="bold" font-size="12" fill="#059669" text-anchor="middle">直徑 ${hypLen}</text>
+          <text x="115" y="48" font-family="sans-serif" font-weight="bold" font-size="12" fill="#7c3aed" text-anchor="middle">${baseLen}</text>
+          <text x="36" y="48" font-family="sans-serif" font-weight="bold" font-size="11" fill="#059669" text-anchor="middle">30°</text>
+        </svg>
+      `;
+    }
+
+    const TAB4_CONFIGS = {
+      book_ex4: {
+        badgeHtml: `<span class="text-indigo-700 font-black">【例 4】</span> 課本第 133 頁`,
+        title: '【例 4】標準空間方位垂線長度計算',
+        questionHtml: `如圖所示，已知 $\\overline{AB} \\perp$ 平面 $E$ 於 $B$ 點，且平面 $E$ 上直線 $\\overline{BC} \\perp \\overline{CD}$。若 $\\overline{AB}=5$、$\\overline{BC}=4$、$\\overline{CD}=3$，試求空間線段 $\\overline{AD}$ 的長。`,
+        isExercise: false,
+        step1Html: `
+          <div>● 依據三垂線定理：<span class="text-blue-700 font-bold">$\\overline{AB} \\perp \\text{平面 } E$</span> 且 <span class="text-emerald-700 font-bold">$\\overline{BC} \\perp \\overline{CD}$</span> $\\implies$ 得證空間斜線 <span class="text-rose-700 font-bold">$\\overline{AC} \\perp \\overline{CD}$</span>。</div>
+          <div>● 幾何意義：$\\triangle ABC$ 與 $\\triangle ACD$ 均為直角三角形（$\\angle ABC = 90^\\circ, \\angle ACD = 90^\\circ$）。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：立面直角 $\\triangle ABC$',
+            svg: renderRightTriangleSvg('A', 'B', 'C', '5', '4', '√41', '#2563eb', '#059669', '#dc2626'),
+            math: `$$\\overline{AC} = \\sqrt{\\overline{AB}^2 + \\overline{BC}^2} = \\sqrt{5^2 + 4^2} = \\sqrt{41}$$`
+          },
+          {
+            title: '第 2 步：空間斜面直角 $\\triangle ACD$',
+            svg: renderRightTriangleSvg('A', 'C', 'D', '√41', '3', '5√2', '#dc2626', '#7c3aed', '#d97706'),
+            math: `$$\\overline{AD} = \\sqrt{\\overline{AC}^2 + \\overline{CD}^2} = \\sqrt{(\\sqrt{41})^2 + 3^2} = \\sqrt{50} = 5\\sqrt{2}$$`
+          }
+        ],
+        resultHtml: `空間線段長度：<span class="text-rose-700 font-black">$\\overline{AD} = 5\\sqrt{2}$</span>`
+      },
+      book_hw4: {
+        badgeHtml: `<span class="text-emerald-700 font-black">【類題 4】</span> 課本第 133 頁`,
+        title: '【類題 4】反求立柱高度計算',
+        questionHtml: `如圖所示，直線 $L$ 在平面 $E$ 上，$O$ 點在平面 $E$ 的投影點為 $A$（$\\overline{OA} \\perp E$），$A$ 點在直線 $L$ 的投影點為 $B$（$\\overline{AB} \\perp L$），$L$ 上另有一點 $C$。若 $\\overline{BC}=12$、$\\overline{OC}=13$、$\\overline{AB}=4$，試求立柱長度 $\\overline{OA}$。`,
+        isExercise: true,
+        step1Html: `
+          <div>● 依據三垂線定理：$\\overline{OA} \\perp E$ 且 $\\overline{AB} \\perp L$ $\\implies$ 空間斜線 <span class="text-rose-700 font-bold">$\\overline{OB} \\perp L$</span>（即 $\\overline{OB} \\perp \\overline{BC}$ 於 $B$）。</div>
+          <div>● 幾何意義：先在直角 $\\triangle OBC$ 由斜邊逆求股長 $\\overline{OB}$，再於直角 $\\triangle OAB$ 求立柱 $\\overline{OA}$。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：空間斜面直角 $\\triangle OBC$',
+            svg: renderRightTriangleSvg('O', 'B', 'C', '5', '12', '13', '#dc2626', '#7c3aed', '#d97706'),
+            math: `$$\\overline{OB} = \\sqrt{\\overline{OC}^2 - \\overline{BC}^2} = \\sqrt{13^2 - 12^2} = 5$$`
+          },
+          {
+            title: '第 2 步：立面直角 $\\triangle OAB$',
+            svg: renderRightTriangleSvg('O', 'A', 'B', '3', '4', '5', '#2563eb', '#059669', '#dc2626'),
+            math: `$$\\overline{OA} = \\sqrt{\\overline{OB}^2 - \\overline{AB}^2} = \\sqrt{5^2 - 4^2} = 3$$`
+          }
+        ],
+        resultHtml: `立柱高度長度：<span class="text-rose-700 font-black">$\\overline{OA} = 3$</span>`
+      },
+      book_ex5: {
+        badgeHtml: `<span class="text-indigo-700 font-black">【例 5】</span> 課本第 134 頁`,
+        title: '【例 5】平台型鋼琴頂蓋支撐桿長度計算',
+        questionHtml: `如圖是一架平台型鋼琴示意圖，$\\overline{AB}$ 為支撐架，掀開頂蓋時 $\\overline{AB}$ 垂直頂蓋於 $B$ 點，鉸鍊鎖孔 $C, D$ 在頂蓋邊緣且 $\\overline{BC} \\perp \\overline{CD}$。已知 $\\overline{AB}=4$、$\\overline{BC}=4$、$\\overline{CD}=2$，試求空間距離 $\\overline{AD}$。`,
+        isExercise: false,
+        step1Html: `
+          <div>● 依據三垂線定理：<span class="text-blue-700 font-bold">$\\overline{AB} \\perp \\text{頂蓋平面}$</span> 且 <span class="text-emerald-700 font-bold">$\\overline{BC} \\perp \\overline{CD}$</span> $\\implies$ 得證空間斜線 <span class="text-rose-700 font-bold">$\\overline{AC} \\perp \\overline{CD}$</span>。</div>
+          <div>● 幾何意義：$\\triangle ABC$ 與 $\\triangle ACD$ 均為直角三角形（$\\angle ABC = 90^\\circ, \\angle ACD = 90^\\circ$）。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：直角 $\\triangle ABC$',
+            svg: renderRightTriangleSvg('A', 'B', 'C', '4', '4', '4√2', '#2563eb', '#059669', '#dc2626'),
+            math: `$$\\overline{AC} = \\sqrt{\\overline{AB}^2 + \\overline{BC}^2} = \\sqrt{4^2 + 4^2} = 4\\sqrt{2}$$`
+          },
+          {
+            title: '第 2 步：直角 $\\triangle ACD$',
+            svg: renderRightTriangleSvg('A', 'C', 'D', '4√2', '2', '6', '#dc2626', '#7c3aed', '#d97706'),
+            math: `$$\\overline{AD} = \\sqrt{\\overline{AC}^2 + \\overline{CD}^2} = \\sqrt{(4\\sqrt{2})^2 + 2^2} = \\sqrt{32 + 4} = 6$$`
+          }
+        ],
+        resultHtml: `鉸鍊到支架距離：<span class="text-rose-700 font-black">$\\overline{AD} = 6$</span>`
+      },
+      book_hw5: {
+        badgeHtml: `<span class="text-emerald-700 font-black">【類題 5】</span> 課本第 134 頁`,
+        title: '【類題 5】車輪擋塊斜稜長度計算',
+        questionHtml: `如圖是防止車子滑動的車輪擋塊模型，稜線 $\\overline{OA} \\perp \\triangle ABC$ 於 $A$ 點，底面中 $\\overline{AB} \\perp \\overline{BC}$。若 $\\overline{OA}=2$、$\\overline{AB}=5$、$\\overline{BC}=5$，試求斜稜長度 $\\overline{OC}$。`,
+        isExercise: true,
+        step1Html: `
+          <div>● 依據垂直定義：$\\overline{OA} \\perp \\text{底面 } ABC \\implies \\overline{OA} \\perp \\overline{AC}$，故 $\\triangle OAC$ 為直角三角形。</div>
+          <div>● 幾何意義：先由底面直角 $\\triangle ABC$ 計算對角線 $\\overline{AC}$，再由剖面直角 $\\triangle OAC$ 計算斜稜 $\\overline{OC}$。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：底面直角 $\\triangle ABC$',
+            svg: renderRightTriangleSvg('A', 'B', 'C', '5', '5', '5√2', '#059669', '#059669', '#7c3aed'),
+            math: `$$\\overline{AC} = \\sqrt{\\overline{AB}^2 + \\overline{BC}^2} = \\sqrt{5^2 + 5^2} = 5\\sqrt{2}$$`
+          },
+          {
+            title: '第 2 步：空間剖面直角 $\\triangle OAC$',
+            svg: renderRightTriangleSvg('O', 'A', 'C', '2', '5√2', '3√6', '#2563eb', '#7c3aed', '#d97706'),
+            math: `$$\\overline{OC} = \\sqrt{\\overline{OA}^2 + \\overline{AC}^2} = \\sqrt{2^2 + (5\\sqrt{2})^2} = \\sqrt{4 + 50} = 3\\sqrt{6}$$`
+          }
+        ],
+        resultHtml: `擋塊斜稜長度：<span class="text-rose-700 font-black">$\\overline{OC} = 3\\sqrt{6}$</span>`
+      },
+      book_exercise: {
+        badgeHtml: `<span class="text-indigo-700 font-black">【習題 2】</span> 課本第 141 頁`,
+        title: '【習題 2】建物頂端俯看道路目標距離計算',
+        questionHtml: `如圖所示，阿倫爬上 $9$ 公尺高的建物頂端 $P$ 點俯看筆直道路上一物體 $O$。已知建物底部 $Q$ 與道路上 $R$ 點相距 $12$ 公尺（$\\overline{QR} \\perp \\text{道路}$），且 $\\overline{OR}=8$ 公尺，試求 $P$、$O$ 之間的直線距離。`,
+        isExercise: true,
+        step1Html: `
+          <div>● 依據三垂線定理：<span class="text-blue-700 font-bold">$\\overline{PQ} \\perp \\text{地面}$</span> 且 <span class="text-emerald-700 font-bold">$\\overline{QR} \\perp \\overline{RO}$</span> $\\implies$ 得證視線斜線 <span class="text-rose-700 font-bold">$\\overline{PR} \\perp \\overline{RO}$</span>。</div>
+          <div>● 幾何意義：$\\triangle PQR$ 與 $\\triangle PRO$ 均為直角三角形（$\\angle PQR = 90^\\circ, \\angle PRO = 90^\\circ$）。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：地面立面直角 $\\triangle PQR$',
+            svg: renderRightTriangleSvg('P', 'Q', 'R', '9', '12', '15', '#2563eb', '#059669', '#dc2626'),
+            math: `$$\\overline{PR} = \\sqrt{\\overline{PQ}^2 + \\overline{QR}^2} = \\sqrt{9^2 + 12^2} = 15$$`
+          },
+          {
+            title: '第 2 步：空間斜面直角 $\\triangle PRO$',
+            svg: renderRightTriangleSvg('P', 'R', 'O', '15', '8', '17', '#dc2626', '#7c3aed', '#d97706'),
+            math: `$$\\overline{PO} = \\sqrt{\\overline{PR}^2 + \\overline{RO}^2} = \\sqrt{15^2 + 8^2} = \\sqrt{289} = 17$$`
+          }
+        ],
+        resultHtml: `頂端到目標距離：<span class="text-rose-700 font-black">$\\overline{PO} = 17$</span>`
+      },
+      exam_112: {
+        badgeHtml: `<span class="text-indigo-700 font-black">【統測 112(C)】</span> 課本第 135 頁`,
+        title: '【112 統測數 C】露營垂桿與圓直徑繩索長度計算',
+        questionHtml: `露營活動中，大家要在地面立垂直桿子並以繩索固定，$\\overline{AC}$ 為垂直地面的桿子、$\\overline{AD}$ 為繩索。已知 $\\overline{BC}=10$ 公尺，$D$ 點在以 $\\overline{BC}$ 為直徑的圓上，$\\angle BCD=30^\\circ$。若桿頂 $A$ 到 $B$ 距離為 $20$ 公尺，求 $\\overline{AD}$。`,
+        isExercise: false,
+        step1Html: `
+          <div>● 圓周角與三垂線定理：$\\overline{BC}$ 為直徑 $\\implies \\angle BDC = 90^\\circ$（即 $\\overline{CD} \\perp \\overline{BD}$）。</div>
+          <div>● 由 $\\overline{AC} \\perp \\text{地面}$ 且 $\\overline{CD} \\perp \\overline{BD} \\implies$ 得證繩索斜線 <span class="text-rose-700 font-bold">$\\overline{AD} \\perp \\overline{BD}$</span>（$\\angle ADB = 90^\\circ$）。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：地面圓周角直角 $\\triangle BCD$',
+            svg: renderCircleChordTriangleSvg('C', 'D', 'B', '5√3', '5', '10'),
+            math: `$$\\overline{BD} = \\overline{BC} \\times \\sin 30^\\circ = 10 \\times \\frac{1}{2} = 5$$`
+          },
+          {
+            title: '第 2 步：空間斜面直角 $\\triangle ABD$',
+            svg: renderRightTriangleSvg('A', 'D', 'B', '5√15', '5', '20', '#d97706', '#7c3aed', '#2563eb'),
+            math: `$$\\overline{AB}^2 = \\overline{AD}^2 + \\overline{BD}^2 \\implies \\overline{AD} = \\sqrt{20^2 - 5^2} = 5\\sqrt{15}$$`
+          }
+        ],
+        resultHtml: `繩索固定長度：<span class="text-rose-700 font-black">$\\overline{AD} = 5\\sqrt{15}$</span>`
+      },
+      cuboid: {
+        badgeHtml: `<span class="text-indigo-700 font-black">【長方體模型】</span> 體對角線長度計算`,
+        title: '【長方體模型】體對角線長度計算',
+        questionHtml: `如圖，長方體中，垂直側稜 $\\overline{EA}=3$，底面矩形邊長 $\\overline{AB}=4$、$\\overline{BC}=12$。<br>利用三垂線定理確認垂直關係後，求空間體對角線長度 $\\overline{EC}$。`,
+        isExercise: false,
+        step1Html: `
+          <div>● 依據三垂線定理：<span class="text-blue-700 font-bold">$\\overline{EA} \\perp \\text{底面 } ABCD$</span> 且 <span class="text-emerald-700 font-bold">$\\overline{AB} \\perp \\overline{BC}$</span> $\\implies$ 得證空間斜線 <span class="text-rose-700 font-bold">$\\overline{EB} \\perp \\overline{BC}$</span>。</div>
+          <div>● 幾何意義：將空間問題轉化為兩個「直角三角形」平面計算（$\\triangle EAB$ 與 $\\triangle EBC$）。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：側面直角 $\\triangle EAB$',
+            svg: renderRightTriangleSvg('E', 'A', 'B', '3', '4', '5', '#2563eb', '#059669', '#dc2626'),
+            math: `$$\\overline{EB} = \\sqrt{\\overline{EA}^2 + \\overline{AB}^2} = \\sqrt{3^2 + 4^2} = 5$$`
+          },
+          {
+            title: '第 2 步：空間斜面直角 $\\triangle EBC$',
+            svg: renderRightTriangleSvg('E', 'B', 'C', '5', '12', '13', '#dc2626', '#7c3aed', '#d97706'),
+            math: `$$\\overline{EC} = \\sqrt{\\overline{EB}^2 + \\overline{BC}^2} = \\sqrt{5^2 + 12^2} = 13$$`
+          }
+        ],
+        resultHtml: `體對角線長度：<span class="text-rose-700 font-black">$\\overline{EC} = 13$</span>`
+      },
+      diagonal: {
+        badgeHtml: `<span class="text-indigo-700 font-black">【面對角線模型】</span> 空間垂線長度（統測高頻）`,
+        title: '【面對角線模型】面對角線垂線長度計算',
+        questionHtml: `如圖，長方體中，底面矩形邊長 $\\overline{AB}=20$、$\\overline{AD}=15$，垂直側稜 $\\overline{HD}=5$。<br>由垂足 $D$ 點向底面對角線 $\\overline{AC}$ 作垂線，垂足為 $K$。求頂點 $H$ 到直線 $AC$ 的距離 $\\overline{HK}$。`,
+        isExercise: false,
+        step1Html: `
+          <div>● 依據三垂線定理：<span class="text-blue-700 font-bold">$\\overline{HD} \\perp \\text{底面 } ABCD$</span> 且 <span class="text-emerald-700 font-bold">$\\overline{DK} \\perp \\overline{AC}$</span> $\\implies$ 得證空間斜線 <span class="text-rose-700 font-bold">$\\overline{HK} \\perp \\overline{AC}$</span>。</div>
+          <div>● 幾何意義：頂點 $H$ 到對角線 $AC$ 的最短距離即為 $\\overline{HK}$，由直角 $\\triangle HDK$ 計算。</div>
+        `,
+        triangles: [
+          {
+            title: '第 1 步：底面直角 $\\triangle ADC$（求高 $\\overline{DK}$）',
+            svg: renderAltitudeTriangleSvg('A', 'D', 'C', 'K', '15', '20', '25', '12', '#059669', '#059669', '#7c3aed', '#059669'),
+            math: `$$\\overline{AC} = \\sqrt{15^2 + 20^2} = 25$$<div class="mt-1">面積法：$\\overline{DK} = \\frac{\\overline{AD} \\times \\overline{CD}}{\\overline{AC}} = \\frac{15 \\times 20}{25} = 12$</div>`
+          },
+          {
+            title: '第 2 步：空間剖面直角 $\\triangle HDK$',
+            svg: renderRightTriangleSvg('H', 'D', 'K', '5', '12', '13', '#2563eb', '#059669', '#d97706'),
+            math: `$$\\overline{HK} = \\sqrt{\\overline{HD}^2 + \\overline{DK}^2} = \\sqrt{5^2 + 12^2} = 13$$`
+          }
+        ],
+        resultHtml: `空間距離：<span class="text-rose-700 font-black">$\\overline{HK} = 13$</span>`
+      }
+    };
+
+    function setTab4Model(modelKey) {
+      tab4Model = modelKey;
+      tab4ExerciseSolutionShown = false;
+
+      ['book_ex4', 'book_hw4', 'book_ex5', 'book_hw5', 'book_exercise', 'exam_112', 'cuboid', 'diagonal'].forEach(m => {
+        const btn = document.getElementById('btnTab4Model_' + m);
+        if (btn) {
+          btn.className = (m === modelKey)
+            ? 'px-2.5 py-1 rounded-md text-xs font-bold bg-blue-700 text-white shadow-xs'
+            : 'px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50';
+        }
+      });
+
+      const cfg = TAB4_CONFIGS[modelKey];
+      document.getElementById('tab4CanvasBadge').innerHTML = cfg.badgeHtml;
+      document.getElementById('tab4CardTitle').innerText = cfg.title;
+      document.getElementById('tab4QuestionCard').innerHTML = cfg.questionHtml;
+
+      const toggleBtn = document.getElementById('btnTab4ToggleSolution');
+      if (cfg.isExercise) {
+        toggleBtn.classList.remove('hidden');
+        toggleBtn.innerText = '顯示完整解析';
+      } else {
+        toggleBtn.classList.add('hidden');
+      }
+
+      updateTab4SolutionUI();
+      renderTab4();
+    }
+
+    function toggleTab4Solution() {
+      tab4ExerciseSolutionShown = !tab4ExerciseSolutionShown;
+      const toggleBtn = document.getElementById('btnTab4ToggleSolution');
+      toggleBtn.innerText = tab4ExerciseSolutionShown ? '隱藏解析' : '顯示完整解析';
+      updateTab4SolutionUI();
+      renderTab4();
+    }
+
+    function updateTab4SolutionUI() {
+      const cfg = TAB4_CONFIGS[tab4Model];
+      const step1Content = document.getElementById('tab4Step1Content');
+      const trianglesGrid = document.getElementById('tab4TrianglesGrid');
+      const resultText = document.getElementById('tab4ResultText');
+
+      if (cfg.isExercise && !tab4ExerciseSolutionShown) {
+        step1Content.innerHTML = `
+          <div class="p-3 bg-amber-50/80 rounded-xl border border-dashed border-amber-300 text-amber-900">
+            <span class="font-bold">💡 類題實作指引：</span>請在練習紙上畫出這兩個直角三角形，標註題目已知數值，依序求出中間斜邊長與目標長度。完成後點擊右上角按鈕核對！
+          </div>
+        `;
+        trianglesGrid.innerHTML = `
+          <div class="col-span-full p-6 text-center bg-slate-100/80 rounded-2xl border border-dashed border-slate-300 text-slate-500 font-medium">
+            <span class="block text-sm font-bold text-slate-700 mb-1">【解析目前為隱藏模式】</span>
+            請同學先動手演算，完成後點擊右上角「<span class="text-indigo-600 font-bold">顯示完整解析</span>」展開兩步驟平面圖與算式。
+          </div>
+        `;
+        resultText.innerHTML = `待求線段長度：<span class="text-slate-400 font-normal">？（待同學自主計算核對）</span>`;
+      } else {
+        step1Content.innerHTML = cfg.step1Html;
+        trianglesGrid.innerHTML = cfg.triangles.map(t => `
+          <div class="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
+            <span class="font-bold text-slate-800 text-xs block mb-1">${t.title}</span>
+            <div class="my-1 flex items-center justify-center">${t.svg}</div>
+            <div class="text-[12px] text-slate-800 bg-slate-50 p-2 rounded-xl border border-slate-200 overflow-x-auto text-center leading-normal">${t.math}</div>
+          </div>
+        `).join('');
+        resultText.innerHTML = cfg.resultHtml;
+      }
+
+      renderAllMath(document.getElementById('tabContent5'));
+    }
+
+    function renderTab4() {
+      const canvas = document.getElementById('canvasTab4');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+      const camPos = getCameraWorldPos();
+
+      if (tab4Model === 'book_ex4' || tab4Model === 'book_hw4' || tab4Model === 'book_ex5' || tab4Model === 'book_exercise') {
+        // ============================================================
+        // 核心幾何原型：三垂線標準雙直角空間模型
+        // 【例 4】、【類題 4】、【例 5 鋼琴】、【習題 2 道路】完全共用同一個幾何圖形！
+        // ============================================================
+        const planeY = -0.85;
+        const vG1 = [-1.7, planeY, -1.4], vG2 = [ 1.7, planeY, -1.4];
+        const vG3 = [ 1.7, planeY,  1.5], vG4 = [-1.7, planeY,  1.5];
+
+        const pG1 = project3D(vG1, w, h, 1.0), pG2 = project3D(vG2, w, h, 1.0);
+        const pG3 = project3D(vG3, w, h, 1.0), pG4 = project3D(vG4, w, h, 1.0);
+
+        // 底面 (平面 E / 頂蓋 / 地面)
+        ctx.save();
+        ctx.fillStyle = 'rgba(241, 245, 249, 0.75)';
+        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(pG1.x, pG1.y); ctx.lineTo(pG2.x, pG2.y); ctx.lineTo(pG3.x, pG3.y); ctx.lineTo(pG4.x, pG4.y);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#64748b'; ctx.font = 'italic bold 18px "Cambria Math", serif';
+        const planeLabel = tab4Model === 'book_ex5' ? '頂蓋平面' : (tab4Model === 'book_exercise' ? '地面' : 'E');
+        ctx.fillText(planeLabel, pG4.x + 14, pG4.y - 12);
+        ctx.restore();
+
+        // 四個關鍵頂點（100% 相同座標）
+        const vFoot = [-0.6, planeY, 0.0];      // 平面垂足
+        const vTop  = [-0.6, 1.25, 0.0];       // 空間頂點
+        const vCorner = [ 0.7, planeY, 0.0];    // 轉角垂足
+        const vL1 = [ 0.7, planeY, -1.3];
+        const vL2 = [ 0.7, planeY,  1.5];
+        const vPointOnL = [ 0.7, planeY, 1.1];  // 線上目標點
+
+        const pFoot = project3D(vFoot, w, h, 1.0);
+        const pTop = project3D(vTop, w, h, 1.0);
+        const pCorner = project3D(vCorner, w, h, 1.0);
+        const pL1 = project3D(vL1, w, h, 1.0);
+        const pL2 = project3D(vL2, w, h, 1.0);
+        const pPointOnL = project3D(vPointOnL, w, h, 1.0);
+
+        // △1 立面直角三角形 (藍色微透)
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pFoot.x, pFoot.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(37, 99, 235, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        // △2 空間斜面直角三角形 (紅色微透)
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.lineTo(pPointOnL.x, pPointOnL.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        // 目標直線 (紫色)
+        ctx.save();
+        ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.0;
+        ctx.beginPath(); ctx.moveTo(pL1.x, pL1.y); ctx.lineTo(pL2.x, pL2.y); ctx.stroke();
+        ctx.fillStyle = '#7c3aed'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+        const lineLabel = tab4Model === 'book_exercise' ? '道路' : (tab4Model === 'book_ex5' ? '鉸鍊線 CD' : (tab4Model === 'book_ex4' ? 'CD' : 'L'));
+        ctx.fillText(lineLabel, pL2.x + 8, pL2.y);
+        ctx.restore();
+
+        // 彩色邊線
+        ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pFoot.x, pFoot.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pFoot.x, pFoot.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pCorner.x, pCorner.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 3.8; ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pPointOnL.x, pPointOnL.y); ctx.stroke(); ctx.restore();
+
+        // 3D 直角記號
+        draw3DRightAngle(ctx, vFoot, vTop, vCorner, w, h, 0.20, '#2563eb', 1.0);
+        draw3DRightAngle(ctx, vCorner, vFoot, vL1, w, h, 0.20, '#059669', 1.0);
+        draw3DRightAngle(ctx, vCorner, vTop, vL1, w, h, 0.22, '#dc2626', 1.0);
+
+        // 數值徽章：僅標註題目已知邊長，不標註題目未給予之邊長與待求答案
+        if (tab4Model === 'book_ex4') {
+          // 已知：AB=5, BC=4, CD=3
+          drawBadgeNumber(ctx, (pTop.x + pFoot.x)/2 - 18, (pTop.y + pFoot.y)/2, '5', '#2563eb');
+          drawBadgeNumber(ctx, (pFoot.x + pCorner.x)/2, (pFoot.y + pCorner.y)/2 + 18, '4', '#059669');
+          drawBadgeNumber(ctx, (pCorner.x + pPointOnL.x)/2 + 20, (pCorner.y + pPointOnL.y)/2, '3', '#7c3aed');
+        } else if (tab4Model === 'book_hw4') {
+          // 已知：AB=4, BC=12, OC=13
+          drawBadgeNumber(ctx, (pFoot.x + pCorner.x)/2, (pFoot.y + pCorner.y)/2 + 18, '4', '#059669');
+          drawBadgeNumber(ctx, (pCorner.x + pPointOnL.x)/2 + 20, (pCorner.y + pPointOnL.y)/2, '12', '#7c3aed');
+          drawBadgeNumber(ctx, (pTop.x + pPointOnL.x)/2 + 15, (pTop.y + pPointOnL.y)/2 - 16, '13', '#d97706');
+        } else if (tab4Model === 'book_ex5') {
+          // 已知：AB=4, BC=4, CD=2
+          drawBadgeNumber(ctx, (pTop.x + pFoot.x)/2 - 18, (pTop.y + pFoot.y)/2, '4', '#2563eb');
+          drawBadgeNumber(ctx, (pFoot.x + pCorner.x)/2, (pFoot.y + pCorner.y)/2 + 18, '4', '#059669');
+          drawBadgeNumber(ctx, (pCorner.x + pPointOnL.x)/2 + 20, (pCorner.y + pPointOnL.y)/2, '2', '#7c3aed');
+        } else if (tab4Model === 'book_exercise') {
+          // 已知：PQ=9, QR=12, RO=8
+          drawBadgeNumber(ctx, (pTop.x + pFoot.x)/2 - 18, (pTop.y + pFoot.y)/2, '9', '#2563eb');
+          drawBadgeNumber(ctx, (pFoot.x + pCorner.x)/2, (pFoot.y + pCorner.y)/2 + 18, '12', '#059669');
+          drawBadgeNumber(ctx, (pCorner.x + pPointOnL.x)/2 + 20, (pCorner.y + pPointOnL.y)/2, '8', '#7c3aed');
+        }
+
+        // 頂點標籤
+        let labels;
+        if (tab4Model === 'book_ex4' || tab4Model === 'book_ex5') {
+          labels = [{ p: pTop, label: 'A' }, { p: pFoot, label: 'B' }, { p: pCorner, label: 'C' }, { p: pPointOnL, label: 'D' }];
+        } else if (tab4Model === 'book_hw4') {
+          labels = [{ p: pTop, label: 'O' }, { p: pFoot, label: 'A' }, { p: pCorner, label: 'B' }, { p: pPointOnL, label: 'C' }];
+        } else {
+          labels = [{ p: pTop, label: 'P' }, { p: pFoot, label: 'Q' }, { p: pCorner, label: 'R' }, { p: pPointOnL, label: 'O' }];
+        }
+
+        labels.forEach(item => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(item.p.x, item.p.y, 6.0, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 21px "Cambria Math", serif';
+          ctx.fillText(item.label, item.p.x + 9, item.p.y - 7);
+          ctx.restore();
+        });
+      } else if (tab4Model === 'book_hw5') {
+        // 車輪擋塊直角三稜柱
+        const vA = [-0.9, -0.85, -0.7];
+        const vB = [ 0.7, -0.85, -0.7];
+        const vC = [ 0.7, -0.85,  0.8];
+        const vO = [-0.9,  0.75, -0.7];
+
+        const pA = project3D(vA, w, h, 1.0);
+        const pB = project3D(vB, w, h, 1.0);
+        const pC = project3D(vC, w, h, 1.0);
+        const pO = project3D(vO, w, h, 1.0);
+
+        // 底面 △ABC (綠)
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(5, 150, 105, 0.15)'; ctx.fill();
+        ctx.restore();
+
+        // 空間剖面 △OAC (紅)
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        // 骨架線
+        ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pA.x, pA.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 4.0; ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2.0; ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 3.8; ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+
+        draw3DRightAngle(ctx, vA, vO, vB, w, h, 0.20, '#2563eb', 1.0);
+        draw3DRightAngle(ctx, vB, vA, vC, w, h, 0.20, '#059669', 1.0);
+        draw3DRightAngle(ctx, vA, vO, vC, w, h, 0.20, '#2563eb', 1.0);
+
+        // 已知：OA=2, AB=5, BC=5
+        drawBadgeNumber(ctx, (pO.x + pA.x)/2 - 18, (pO.y + pA.y)/2, '2', '#2563eb');
+        drawBadgeNumber(ctx, (pA.x + pB.x)/2, (pA.y + pB.y)/2 - 14, '5', '#059669');
+        drawBadgeNumber(ctx, (pB.x + pC.x)/2 + 20, (pB.y + pC.y)/2, '5', '#7c3aed');
+
+        [{ p: pO, label: 'O' }, { p: pA, label: 'A' }, { p: pB, label: 'B' }, { p: pC, label: 'C' }].forEach(item => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(item.p.x, item.p.y, 6.0, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 21px "Cambria Math", serif';
+          ctx.fillText(item.label, item.p.x + 9, item.p.y - 7);
+          ctx.restore();
+        });
+
+      } else if (tab4Model === 'book_exercise') {
+        // 建物頂端俯看道路
+        const planeY = -0.85;
+        const vG1 = [-1.7, planeY, -1.4], vG2 = [ 1.7, planeY, -1.4];
+        const vG3 = [ 1.7, planeY,  1.5], vG4 = [-1.7, planeY,  1.5];
+
+        const pG1 = project3D(vG1, w, h, 1.0), pG2 = project3D(vG2, w, h, 1.0);
+        const pG3 = project3D(vG3, w, h, 1.0), pG4 = project3D(vG4, w, h, 1.0);
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(241, 245, 249, 0.75)';
+        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(pG1.x, pG1.y); ctx.lineTo(pG2.x, pG2.y); ctx.lineTo(pG3.x, pG3.y); ctx.lineTo(pG4.x, pG4.y);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.restore();
+
+        const vQ = [-0.6, planeY, 0.0];
+        const vP = [-0.6, 1.25, 0.0];
+        const vR = [ 0.7, planeY, 0.0];
+        const vL1 = [ 0.7, planeY, -1.3];
+        const vL2 = [ 0.7, planeY,  1.5];
+        const vO = [ 0.7, planeY, 1.1];
+
+        const pQ = project3D(vQ, w, h, 1.0);
+        const pP = project3D(vP, w, h, 1.0);
+        const pR = project3D(vR, w, h, 1.0);
+        const pL1 = project3D(vL1, w, h, 1.0);
+        const pL2 = project3D(vL2, w, h, 1.0);
+        const pO = project3D(vO, w, h, 1.0);
+
+        // △PQR (藍) 與 △PRO (紅)
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pQ.x, pQ.y); ctx.lineTo(pR.x, pR.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(37, 99, 235, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pR.x, pR.y); ctx.lineTo(pO.x, pO.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        // 道路 (紫色)
+        ctx.save(); ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 5.0;
+        ctx.beginPath(); ctx.moveTo(pL1.x, pL1.y); ctx.lineTo(pL2.x, pL2.y); ctx.stroke();
+        ctx.fillStyle = '#7c3aed'; ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('筆直道路', pL2.x + 8, pL2.y);
+        ctx.restore();
+
+        ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pQ.x, pQ.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pQ.x, pQ.y); ctx.lineTo(pR.x, pR.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pR.x, pR.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 3.8; ctx.beginPath(); ctx.moveTo(pP.x, pP.y); ctx.lineTo(pO.x, pO.y); ctx.stroke(); ctx.restore();
+
+        draw3DRightAngle(ctx, vQ, vP, vR, w, h, 0.20, '#2563eb', 1.0);
+        draw3DRightAngle(ctx, vR, vQ, vL1, w, h, 0.20, '#059669', 1.0);
+        draw3DRightAngle(ctx, vR, vP, vL1, w, h, 0.22, '#dc2626', 1.0);
+
+        // 已知：PQ=9, QR=12, RO=8
+        drawBadgeNumber(ctx, (pP.x + pQ.x)/2 - 18, (pP.y + pQ.y)/2, '9', '#2563eb');
+        drawBadgeNumber(ctx, (pQ.x + pR.x)/2, (pQ.y + pR.y)/2 + 18, '12', '#059669');
+        drawBadgeNumber(ctx, (pR.x + pO.x)/2 + 20, (pR.y + pO.y)/2, '8', '#7c3aed');
+
+        [{ p: pP, label: 'P' }, { p: pQ, label: 'Q' }, { p: pR, label: 'R' }, { p: pO, label: 'O' }].forEach(item => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(item.p.x, item.p.y, 6.0, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 21px "Cambria Math", serif';
+          ctx.fillText(item.label, item.p.x + 9, item.p.y - 7);
+          ctx.restore();
+        });
+
+      } else if (tab4Model === 'exam_112') {
+        // 112 統測露營圓直徑題
+        const planeY = -0.85;
+        const vC = [ 0.7, planeY, 0.0];
+        const vB = [-0.7, planeY, 0.0];
+        const vA = [ 0.7, 1.25, 0.0];
+        const vD = [ 0.35, planeY, 0.606];
+
+        const pC = project3D(vC, w, h, 1.0);
+        const pB = project3D(vB, w, h, 1.0);
+        const pA = project3D(vA, w, h, 1.0);
+        const pD = project3D(vD, w, h, 1.0);
+
+        // 地面圓形直徑輔助
+        ctx.save();
+        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        for (let angle = 0; angle <= Math.PI * 2; angle += 0.15) {
+          const pt = [0.7 * Math.cos(angle), planeY, 0.7 * Math.sin(angle)];
+          const pr = project3D(pt, w, h, 1.0);
+          if (angle === 0) ctx.moveTo(pr.x, pr.y); else ctx.lineTo(pr.x, pr.y);
+        }
+        ctx.closePath(); ctx.stroke();
+        ctx.restore();
+
+        // △BCD (綠) 與 △ABD (紅)
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.lineTo(pD.x, pD.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(5, 150, 105, 0.15)'; ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.lineTo(pD.x, pD.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 5.0; ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 4.5; ctx.beginPath(); ctx.moveTo(pB.x, pB.y); ctx.lineTo(pD.x, pD.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(pC.x, pC.y); ctx.lineTo(pD.x, pD.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 4.0; ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 3.8; ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pD.x, pD.y); ctx.stroke(); ctx.restore();
+
+        draw3DRightAngle(ctx, vC, vA, vB, w, h, 0.20, '#2563eb', 1.0);
+        draw3DRightAngle(ctx, vD, vC, vB, w, h, 0.20, '#059669', 1.0);
+        draw3DRightAngle(ctx, vD, vA, vB, w, h, 0.22, '#dc2626', 1.0);
+
+        // 已知：直徑 BC=10, BD=5, AC=20
+        drawBadgeNumber(ctx, (pB.x + pC.x)/2, (pB.y + pC.y)/2 + 18, '直徑 10', '#059669');
+        drawBadgeNumber(ctx, (pB.x + pD.x)/2 - 14, (pB.y + pD.y)/2 + 14, '5', '#7c3aed');
+        drawBadgeNumber(ctx, (pA.x + pB.x)/2 - 18, (pA.y + pB.y)/2, '20', '#2563eb');
+
+        [{ p: pA, label: 'A' }, { p: pB, label: 'B' }, { p: pC, label: 'C' }, { p: pD, label: 'D' }].forEach(item => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(item.p.x, item.p.y, 6.0, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 21px "Cambria Math", serif';
+          ctx.fillText(item.label, item.p.x + 9, item.p.y - 7);
+          ctx.restore();
+        });
+
+      } else if (tab4Model === 'cuboid') {
+        const shape = SHAPES_DATA.cube;
+        const faceVis = computeFaceVisibility(shape, camPos);
+        const projected = shape.vertices.map(pt => project3D(pt, w, h, 1.0));
+
+        const pD = projected[0], pC = projected[1], pB = projected[2], pA = projected[3];
+        const pE = projected[7];
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pE.x, pE.y); ctx.lineTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(37, 99, 235, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pE.x, pE.y); ctx.lineTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.setLineDash([7, 5]); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 3.5;
+        ctx.beginPath(); ctx.moveTo(pE.x, pE.y); ctx.lineTo(pC.x, pC.y); ctx.stroke();
+        ctx.restore();
+
+        drawShapeEdges(ctx, shape, projected, faceVis);
+
+        const vD = shape.vertices[0], vC = shape.vertices[1], vB = shape.vertices[2], vA = shape.vertices[3], vE = shape.vertices[7];
+        draw3DRightAngle(ctx, vA, vE, vB, w, h, 0.22, '#2563eb');
+        draw3DRightAngle(ctx, vA, vE, vD, w, h, 0.22, '#2563eb');
+        draw3DRightAngle(ctx, vB, vA, vC, w, h, 0.22, '#059669');
+        draw3DRightAngle(ctx, vB, vE, vC, w, h, 0.26, '#dc2626');
+
+        // 已知：EA=3, AB=4, BC=12
+        drawBadgeNumber(ctx, (pE.x + pA.x)/2 - 18, (pE.y + pA.y)/2, '3', '#2563eb');
+        drawBadgeNumber(ctx, (pA.x + pB.x)/2, (pA.y + pB.y)/2 + 18, '4', '#059669');
+        drawBadgeNumber(ctx, (pB.x + pC.x)/2 + 25, (pB.y + pC.y)/2, '12', '#7c3aed');
+
+        projected.forEach((p, i) => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+          ctx.fillText(shape.labels[i], p.x + 9, p.y - 7);
+          ctx.restore();
+        });
+
+      } else if (tab4Model === 'diagonal') {
+        const shape = SHAPES_DATA.cube;
+        const faceVis = computeFaceVisibility(shape, camPos);
+        const projected = shape.vertices.map(pt => project3D(pt, w, h, 1.0));
+
+        const vD = shape.vertices[0], vC = shape.vertices[1], vB = shape.vertices[2], vA = shape.vertices[3];
+        const vH = shape.vertices[4];
+        const pD = projected[0], pC = projected[1], pB = projected[2], pA = projected[3], pH = projected[4];
+
+        const wSide = 3.2, dSide = 2.2;
+        const tParam = (dSide * dSide) / (wSide * wSide + dSide * dSide);
+        const vK = [vA[0] + tParam * wSide, vA[1], vA[2] - tParam * dSide];
+        const pK = project3D(vK, w, h, 1.0);
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pD.x, pD.y); ctx.lineTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(5, 150, 105, 0.12)'; ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(pH.x, pH.y); ctx.lineTo(pD.x, pD.y); ctx.lineTo(pK.x, pK.y); ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.18)'; ctx.fill();
+        ctx.restore();
+
+        drawShapeEdges(ctx, shape, projected, faceVis);
+
+        ctx.save(); ctx.strokeStyle = '#059669'; ctx.lineWidth = 4.5;
+        ctx.beginPath(); ctx.moveTo(pD.x, pD.y); ctx.lineTo(pK.x, pK.y); ctx.stroke(); ctx.restore();
+
+        ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 4.0;
+        ctx.beginPath(); ctx.moveTo(pH.x, pH.y); ctx.lineTo(pK.x, pK.y); ctx.stroke(); ctx.restore();
+
+        ctx.save(); ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 4.0;
+        ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pC.x, pC.y); ctx.stroke(); ctx.restore();
+
+        ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 5.0;
+        ctx.beginPath(); ctx.moveTo(pH.x, pH.y); ctx.lineTo(pD.x, pD.y); ctx.stroke(); ctx.restore();
+
+        draw3DRightAngle(ctx, vD, vH, vA, w, h, 0.20, '#2563eb');
+        draw3DRightAngle(ctx, vD, vH, vC, w, h, 0.20, '#2563eb');
+        draw3DRightAngle(ctx, vK, vD, vC, w, h, 0.20, '#059669');
+        draw3DRightAngle(ctx, vK, vH, vC, w, h, 0.24, '#dc2626');
+
+        // 已知：HD=5, AD=15, CD=20
+        drawBadgeNumber(ctx, (pH.x + pD.x)/2 - 18, (pH.y + pD.y)/2, '5', '#2563eb');
+        drawBadgeNumber(ctx, (pA.x + pD.x)/2 - 20, (pA.y + pD.y)/2 + 10, '15', '#059669');
+        drawBadgeNumber(ctx, (pC.x + pD.x)/2, (pC.y + pD.y)/2 - 16, '20', '#059669');
+
+        projected.forEach((p, i) => {
+          ctx.save();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI*2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+          ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+          ctx.fillText(shape.labels[i], p.x + 9, p.y - 7);
+          ctx.restore();
+        });
+
+        ctx.save();
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(pK.x, pK.y, 5.5, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.2; ctx.stroke();
+        ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 20px "Cambria Math", serif';
+        ctx.fillText('K', pK.x + 8, pK.y - 7);
+        ctx.restore();
+      }
+    }
+
+    
+
+
+    // ==========================================
+    // 全域分頁控制
+    // ==========================================
+    let activeTab = 1;
+
+    function switchTab(tabIndex) {
+      activeTab = tabIndex;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById('tabBtn' + i);
+        const content = document.getElementById('tabContent' + i);
+        if (!btn || !content) continue;
+        if (i === tabIndex) {
+          btn.className = 'tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-bold transition bg-blue-700 text-white shadow-xs';
+          content.classList.remove('hidden');
+        } else {
+          btn.className = 'tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+          content.classList.add('hidden');
+        }
+      }
+      renderAllMath();
+      renderActiveTab();
+    }
+
+    function renderActiveTab() {
+      if (activeTab === 1) renderTab1();
+      else if (activeTab === 2) renderGuess();
+      else if (activeTab === 3) renderTab2();
+      else if (activeTab === 4) renderTab3();
+      else if (activeTab === 5) renderTab4();
+    }
+
+    window.addEventListener('resize', renderActiveTab);
+    window.addEventListener('DOMContentLoaded', () => {
+      // 5 個 Canvas 全面裝載 360° 拖曳旋轉
+      setupOrbitDrag('canvasTab1');
+      setupOrbitDrag('canvasGuess');
+      setupOrbitDrag('canvasTab2');
+      setupOrbitDrag('canvasTab3');
+      setupOrbitDrag('canvasTab4');
+
+      initGuessQuestions();
+      setTab3Model('book_ex4');
+      setTab4Model('book_ex4');
+      switchTab(1);
+      renderAllMath();
+    });
+  </script>
+</body>
+</html>

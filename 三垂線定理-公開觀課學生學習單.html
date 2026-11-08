@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>三垂線定理 課堂學習單 (B4規格・影印高對比版)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body, {delimiters: [{left: '$', right: '$', display: false}]});"></script>
+  <style>
+    @page {
+      size: 257mm 364mm;
+      margin: 8mm 12mm 8mm 12mm;
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print { display: none !important; }
+      .page {
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        box-sizing: border-box !important;
+      }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: #000000;
+      background-color: #f1f5f9;
+      line-height: 1.35;
+    }
+    .page {
+      background: #ffffff;
+      width: 257mm;
+      min-height: 364mm;
+      margin: 12mm auto;
+      padding: 8mm 12mm 10mm 12mm;
+      box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .fill-blank {
+      display: inline-block;
+      border-bottom: 1.8px solid #000000;
+      text-align: center;
+      padding: 0 4px;
+      margin: 0 2px;
+      font-weight: 700;
+      color: #000000;
+    }
+    .calc-box {
+      border: 1.5px dashed #475569;
+      background-color: #ffffff;
+      border-radius: 6px;
+    }
+    .svg-math {
+      font-family: 'KaTeX_Math', 'Times New Roman', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+      fill: #000000;
+    }
+    .svg-num {
+      font-family: 'KaTeX_Main', 'Times New Roman', Georgia, serif;
+      font-weight: 700;
+      fill: #000000;
+    }
+    /* Teacher Answers: 100% Solid Black with underline for crystal clear photocopies */
+    .ans-text {
+      display: none;
+      color: #000000 !important;
+      font-weight: 900 !important;
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+    }
+    .show-answers .ans-text {
+      display: inline !important;
+    }
+    .show-answers .ans-hide {
+      display: none !important;
+    }
+    .ans-show {
+      display: none;
+    }
+    .show-answers .ans-show {
+      display: inline !important;
+    }
+  </style>
+</head>
+<body class="p-4 print:p-0">
+
+  <!-- 列印與解答切換控制列 (列印時自動隱藏) -->
+  <div class="no-print max-w-[257mm] mx-auto mb-3 flex justify-between items-center bg-white p-3 rounded-lg shadow-sm border border-slate-300">
+    <div class="flex items-center gap-3">
+      <span class="font-bold text-slate-800 text-sm">B4 雙面學習單（純黑白高對比・影印防失真版）</span>
+      <span class="text-xs text-slate-500 font-medium">嚴格鎖定恰好 2 頁，絕不溢出</span>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="toggleAnswerMode()" id="toggleAnsBtn" class="px-3 py-1.5 bg-slate-900 text-white rounded text-xs font-bold hover:bg-slate-800 transition shadow-xs">
+        切換：顯示教師解答
+      </button>
+      <button onclick="window.print()" class="px-4 py-1.5 bg-blue-700 text-white rounded text-xs font-bold hover:bg-blue-800 transition shadow-xs">
+        直接列印學習單 (B4)
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 正面：一、重點核心 ＆ 二、教師示範【例題 4】                -->
+  <!-- ============================================================ -->
+  <div class="page">
+    <div>
+      <!-- 標頭 -->
+      <div class="border-b-2 border-slate-900 pb-1 mb-2 flex justify-between items-center">
+        <h1 class="text-xl font-black tracking-tight text-slate-950">三垂線定理與空間距離 課堂學習單</h1>
+        <!-- 學生資訊欄：只保留班級、座號、姓名 -->
+        <div class="flex items-center gap-6 text-sm text-slate-950 font-bold">
+          <div>班級：<span class="fill-blank" style="min-width: 80px;"></span></div>
+          <div>座號：<span class="fill-blank" style="min-width: 60px;"></span></div>
+          <div>姓名：<span class="fill-blank" style="min-width: 110px;"></span></div>
+        </div>
+      </div>
+
+      <!-- 一、重點核心：三垂線定理 (直觀架構：條件一 ＋ 條件二 ＝ 結論) -->
+      <div class="border-2 border-slate-900 p-2.5 rounded-lg bg-white mb-2 shadow-2xs">
+        <div class="font-black text-xs text-slate-950 pb-1 border-b border-slate-300 flex justify-between items-baseline mb-1.5">
+          <span>一、重點核心：三垂線定理（直觀架構：條件一 ＋ 條件二 $\implies$ 結論）</span>
+          <span class="text-xs font-bold text-slate-700">課本第 132 頁</span>
+        </div>
+
+        <div class="flex gap-3 items-center">
+          <!-- 直觀推導邏輯三卡片 -->
+          <div class="flex-1 grid grid-cols-11 gap-1.5 items-center text-xs">
+            <!-- 條件一 -->
+            <div class="col-span-3 border-2 border-slate-900 rounded-lg p-2 bg-white text-center">
+              <span class="inline-block border border-slate-900 bg-slate-100 text-slate-950 text-[10.5px] px-2 py-0.5 rounded font-black mb-1">條件一：線面垂直</span>
+              <p class="font-black text-slate-950 text-xs mt-0.5">$\overline{AB} \perp$ 平面 $E$</p>
+              <span class="text-[11px] text-slate-700 font-medium block mt-0.5">（立柱垂直地面於 $B$）</span>
+            </div>
+
+            <div class="col-span-1 text-center font-black text-base text-slate-900">＋</div>
+
+            <!-- 條件二 -->
+            <div class="col-span-3 border-2 border-slate-900 rounded-lg p-2 bg-white text-center">
+              <span class="inline-block border border-slate-900 bg-slate-100 text-slate-950 text-[10.5px] px-2 py-0.5 rounded font-black mb-1">條件二：平面線線垂直</span>
+              <p class="font-black text-slate-950 text-xs mt-0.5">$\overline{BC} \perp$ 直線 $L$</p>
+              <span class="text-[11px] text-slate-700 font-medium block mt-0.5">（地面折線垂直 $L$ 於 $C$）</span>
+            </div>
+
+            <div class="col-span-1 text-center font-black text-base text-slate-900">＝</div>
+
+            <!-- 結論 -->
+            <div class="col-span-3 border-2 border-slate-900 rounded-lg p-2 bg-slate-50 text-center">
+              <span class="inline-block border-2 border-slate-900 bg-white text-slate-950 text-[10.5px] px-2 py-0.5 rounded font-black mb-1">三垂線定理結論</span>
+              <p class="font-black text-slate-950 text-xs mt-0.5">$\overline{AC} \perp$ 直線 $L$</p>
+              <span class="text-[11px] text-slate-900 font-bold block mt-0.5">（空間斜線垂直直線 $L$）</span>
+            </div>
+          </div>
+
+          <!-- 課本原圖示意 -->
+          <div class="w-[236px] flex-shrink-0 text-center bg-slate-50/60 p-1.5 rounded-lg border border-slate-300">
+            <svg viewBox="0 0 220 148" class="w-full h-auto mx-auto" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="20.8,118.7 150.7,118.7 194.6,76.3 64.8,76.3" fill="#ffffff" stroke="#000000" stroke-width="1.35"/>
+              <text x="163.8" y="86.6" class="svg-math" font-size="13.5">E</text>
+              <line x1="103.1" y1="113.8" x2="151.8" y2="88.2" stroke="#000000" stroke-width="1.8" stroke-linecap="round"/>
+              <text x="90.1" y="115.8" class="svg-math" font-size="13.5">L</text>
+              <polygon points="86.0,96.0 86.0,87.5 92.9,88.6 92.9,97.2" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <polygon points="124.7,102.4 117.8,101.3 111.6,104.6 118.5,105.7" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <polygon points="124.7,102.4 120.1,93.7 127.3,89.9 131.8,98.7" fill="#e2e8f0" stroke="#000000" stroke-width="1.45"/>
+              <line x1="86.0" y1="27.4" x2="86.0" y2="96.0" stroke="#000000" stroke-width="2.0" stroke-linecap="round"/>
+              <line x1="86.0" y1="96.0" x2="124.7" y2="102.4" stroke="#000000" stroke-width="1.85" stroke-linecap="round"/>
+              <line x1="86.0" y1="27.4" x2="124.7" y2="102.4" stroke="#000000" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="86.0" cy="27.4" r="2.7" fill="#000000"/>
+              <circle cx="86.0" cy="96.0" r="2.7" fill="#000000"/>
+              <circle cx="124.7" cy="102.4" r="2.7" fill="#000000"/>
+              <text x="72.0" y="31.4" class="svg-math" font-size="14">A</text>
+              <text x="72.0" y="101.0" class="svg-math" font-size="14">B</text>
+              <text x="130.7" y="115.4" class="svg-math" font-size="14">C</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 二、教師示範：【例 4】標準垂線長度計算 (課本第 133 頁) -->
+      <div class="border-2 border-slate-900 p-2.5 rounded-lg bg-white shadow-2xs">
+        <div class="font-black text-xs text-slate-950 pb-1 border-b border-slate-300 flex justify-between items-baseline mb-1.5">
+          <span>二、教師示範：【例題 4】標準空間距離計算（課本第 133 頁）</span>
+          <span class="text-xs font-bold text-slate-700">例題精讀</span>
+        </div>
+
+        <!-- 題目情境＋步驟一＋步驟二（左側），大尺寸立體圖（右側） -->
+        <div class="flex gap-3.5 items-center mb-2">
+          <div class="flex-1 flex flex-col gap-1.5">
+            <p class="text-xs leading-relaxed text-slate-950 font-medium">
+              <strong>【題目】</strong>如圖所示，設直線 $AB$ 垂直平面 $E$ 於 $B$ 點，平面 $E$ 上有一條直線 $L$。若從 $B$ 點向直線 $L$ 作垂線，垂足為 $C$，且在直線 $L$ 上取一點 $D$。已知 $\overline{AB} = 5$，$\overline{BC} = 4$，$\overline{CD} = 3$，試求空間距離 $\overline{AD}$。
+            </p>
+
+            <!-- 步驟一：猜猜哪個是直角 -->
+            <div class="p-1.5 bg-slate-50 border border-slate-300 rounded text-xs flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-950">【步驟一：猜猜哪個是直角】</span>
+                <span class="ml-1 text-slate-800">猜猜看空間中哪一個角是直角？</span>
+              </div>
+              <div class="font-bold whitespace-nowrap">
+                $\angle$ <span class="fill-blank" style="min-width: 45px;"><span class="ans-text">ACD</span></span> $= 90^\circ$
+              </div>
+            </div>
+
+            <!-- 步驟二：三垂線定理證明填空 -->
+            <div class="p-1.5 bg-slate-50 border border-slate-300 rounded text-xs leading-relaxed">
+              <span class="font-bold text-slate-950 block mb-0.5">【步驟二：三垂線定理垂直證明填空】（請依定理架構填入條件與結論）</span>
+              <div class="space-y-0.5 text-slate-900">
+                <p>
+                  因為 $\overline{AB} \perp$ 平面 <span class="fill-blank" style="min-width: 34px;"><span class="ans-text">$E$</span></span>（條件一：線面垂直），
+                  且 $\overline{BC} \perp$ 直線 <span class="fill-blank" style="min-width: 34px;"><span class="ans-text">$L$</span></span>（條件二：平面線線垂直），
+                </p>
+                <p>
+                  由<strong>三垂線定理</strong>可知：空間斜線 <span class="fill-blank" style="min-width: 44px;"><span class="ans-text">$\overline{AC}$</span></span> $\perp$ 直線 <span class="fill-blank" style="min-width: 34px;"><span class="ans-text">$L$</span></span>。
+                  故在直線 $L$ 上，$\angle ACD = $ <span class="fill-blank" style="min-width: 42px;"><span class="ans-text">$90^\circ$</span></span>。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 例 4 空間幾何圖 -->
+          <div class="w-[255px] flex-shrink-0 text-center bg-slate-50/70 p-1.5 rounded-lg border border-slate-300">
+            <svg viewBox="0 0 230 155" class="w-full h-auto mx-auto" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="12.4,127.3 144.7,127.3 187.4,86.1 55.1,86.1" fill="#ffffff" stroke="#000000" stroke-width="1.35"/>
+              <text x="157.6" y="94.9" class="svg-math" font-size="13.5">E</text>
+              <line x1="111.7" y1="117.2" x2="149.0" y2="90.3" stroke="#000000" stroke-width="1.7" stroke-linecap="round"/>
+              <text x="98.7" y="120.2" class="svg-math" font-size="13">L</text>
+              <polygon points="71.9,97.7 71.9,90.3 78.8,90.7 78.8,98.1" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <polygon points="133.6,101.4 126.3,101.0 122.0,104.1 129.3,104.5" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <line x1="71.9" y1="25.2" x2="71.9" y2="97.7" stroke="#000000" stroke-width="2.0" stroke-linecap="round"/>
+              <line x1="71.9" y1="97.7" x2="133.6" y2="101.4" stroke="#000000" stroke-width="1.9" stroke-linecap="round"/>
+              <line x1="71.9" y1="25.2" x2="133.6" y2="101.4" stroke="#000000" stroke-width="1.9" stroke-linecap="round"/>
+              <line x1="133.6" y1="101.4" x2="117.5" y2="113.0" stroke="#000000" stroke-width="2.4" stroke-linecap="round"/>
+              <line x1="71.9" y1="25.2" x2="117.5" y2="113.0" stroke="#000000" stroke-width="2.3" stroke-dasharray="5,3" stroke-linecap="round"/>
+              <circle cx="71.9" cy="25.2" r="2.7" fill="#000000"/>
+              <circle cx="71.9" cy="97.7" r="2.7" fill="#000000"/>
+              <circle cx="133.6" cy="101.4" r="2.7" fill="#000000"/>
+              <circle cx="117.5" cy="113.0" r="2.7" fill="#000000"/>
+              <text x="57.9" y="28.2" class="svg-math" font-size="14">A</text>
+              <text x="56.9" y="102.7" class="svg-math" font-size="14">B</text>
+              <text x="140.6" y="105.4" class="svg-math" font-size="14">C</text>
+              <text x="118.5" y="126.0" class="svg-math" font-size="14">D</text>
+              <text x="58.9" y="65.5" class="svg-num" font-size="12.5">5</text>
+              <text x="92.9" y="111.9" class="svg-num" font-size="12.5">4</text>
+              <text x="134.6" y="119.2" class="svg-num" font-size="12.5">3</text>
+              <text x="81.6" y="71.9" class="svg-num" font-size="13">?</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 步驟三：抽離兩個平面直角三角形，用畢氏定理求出長度 -->
+        <span class="font-bold text-xs text-slate-950 block mb-1">【步驟三：抽離平面直角三角形，畢氏定理自主計算邊長】</span>
+        <div class="grid grid-cols-2 gap-3.5 text-xs">
+          <!-- 三角形 1: 立面三角形 ABC -->
+          <div class="calc-box p-2.5 flex flex-col justify-between min-h-[325px]">
+            <div>
+              <div class="flex items-center justify-between pb-1 mb-2 border-b border-slate-300">
+                <span class="font-bold text-slate-950 text-xs">① 立面直角 $\triangle ABC$（求過渡邊 $\overline{AC}$）</span>
+                <span class="text-[11px] text-slate-800 font-bold whitespace-nowrap">直角 $\angle B = 90^\circ$</span>
+              </div>
+              <div class="text-center bg-slate-50/70 p-1 rounded-lg border border-slate-300 mb-2">
+                <svg viewBox="0 0 132 90" class="w-[142px] h-[98px] mx-auto" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="59" width="9" height="9" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+                  <polygon points="34,18 34,68 106,68" fill="none" stroke="#000000" stroke-width="2.0" stroke-linejoin="round"/>
+                  <circle cx="34" cy="18" r="2.3" fill="#000000"/>
+                  <circle cx="34" cy="68" r="2.3" fill="#000000"/>
+                  <circle cx="106" cy="68" r="2.3" fill="#000000"/>
+                  <text x="23" y="18" class="svg-math" font-size="13">A</text>
+                  <text x="21" y="75" class="svg-math" font-size="13">B</text>
+                  <text x="111" y="75" class="svg-math" font-size="13">C</text>
+                  <text x="27" y="47" text-anchor="end" class="svg-num" font-size="12">5</text>
+                  <text x="70" y="83" text-anchor="middle" class="svg-num" font-size="12">4</text>
+                  <text x="75" y="36" class="svg-num ans-hide" font-size="12">?</text><text x="75" y="36" class="svg-num ans-show" font-size="12">√41</text>
+                </svg>
+              </div>
+
+              <!-- 寬廣算式書寫區 -->
+              <div class="border border-slate-300 rounded-lg p-2.5 bg-white min-h-[185px] flex flex-col justify-between">
+                <div>
+                  <div class="space-y-3.5 text-xs">
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">由畢氏定理：$\overline{AC}^2 = \overline{AB}^2 + \overline{BC}^2$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">代入數值：$\overline{AC} = \sqrt{5^2 + 4^2} = \sqrt{25 + 16} = \sqrt{41}$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 flex items-center px-1"></div>
+                  </div>
+                </div>
+                <div class="pt-1.5 border-t border-slate-300 text-right">
+                  <span class="font-bold text-slate-900">求得過渡邊：$\overline{AC} = $ </span>
+                  <span class="fill-blank" style="min-width: 65px;"><span class="ans-text">$\sqrt{41}$</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 三角形 2: 斜面三角形 ACD -->
+          <div class="calc-box p-2.5 flex flex-col justify-between min-h-[325px]">
+            <div>
+              <div class="flex items-center justify-between pb-1 mb-2 border-b border-slate-300">
+                <span class="font-bold text-slate-950 text-xs">② 斜面直角 $\triangle ACD$（求目標邊 $\overline{AD}$）</span>
+                <span class="text-[11px] text-slate-900 font-bold bg-slate-100 px-1.5 py-0.5 rounded border border-slate-400 whitespace-nowrap">三垂線：$\angle C = 90^\circ$</span>
+              </div>
+              <div class="text-center bg-slate-50/70 p-1 rounded-lg border border-slate-300 mb-2">
+                <svg viewBox="0 0 132 90" class="w-[142px] h-[98px] mx-auto" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="59" width="9" height="9" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+                  <polygon points="34,18 34,68 106,68" fill="none" stroke="#000000" stroke-width="2.0" stroke-linejoin="round"/>
+                  <circle cx="34" cy="18" r="2.3" fill="#000000"/>
+                  <circle cx="34" cy="68" r="2.3" fill="#000000"/>
+                  <circle cx="106" cy="68" r="2.3" fill="#000000"/>
+                  <text x="23" y="18" class="svg-math" font-size="13">A</text>
+                  <text x="21" y="75" class="svg-math" font-size="13">C</text>
+                  <text x="111" y="75" class="svg-math" font-size="13">D</text>
+                  <text x="27" y="47" text-anchor="end" class="svg-num ans-hide" font-size="12">?</text><text x="27" y="47" text-anchor="end" class="svg-num ans-show" font-size="12">√41</text>
+                  <text x="70" y="83" text-anchor="middle" class="svg-num" font-size="12">3</text>
+                  <text x="75" y="36" class="svg-num ans-hide" font-size="12">?</text><text x="75" y="36" class="svg-num ans-show" font-size="12">5√2</text>
+                </svg>
+              </div>
+
+              <!-- 寬廣算式書寫區 -->
+              <div class="border border-slate-300 rounded-lg p-2.5 bg-white min-h-[185px] flex flex-col justify-between">
+                <div>
+                  <div class="space-y-3.5 text-xs">
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">由畢氏定理：$\overline{AD}^2 = \overline{AC}^2 + \overline{CD}^2$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">代入數值：$\overline{AD} = \sqrt{(\sqrt{41})^2 + 3^2} = \sqrt{41 + 9} = \sqrt{50} = 5\sqrt{2}$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 flex items-center px-1"></div>
+                  </div>
+                </div>
+                <div class="pt-1 border-t border-slate-300 text-right">
+                  <span class="font-bold text-slate-900">求得目標邊：$\overline{AD} = $ </span>
+                  <span class="fill-blank" style="min-width: 65px;"><span class="ans-text">$5\sqrt{2}$</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-2 text-right text-xs font-black text-slate-950">
+          【本題課本解答】：空間線段 $\overline{AD} = $ <span class="fill-blank" style="min-width: 65px;"><span class="ans-text">$5\sqrt{2}$</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 反面：三、隨堂實作【類題 4】 ＆ 四、生活素養【例題 5】     -->
+  <!-- ============================================================ -->
+  <div class="page">
+    <div>
+      <!-- 標頭 -->
+      <div class="border-b-2 border-slate-900 pb-1.5 mb-2.5 flex justify-between items-center">
+        <h2 class="text-xl font-black text-slate-950">三垂線定理 課堂實作與生活素養應用</h2>
+        <div class="flex items-center gap-6 text-sm text-slate-950 font-bold">
+          <div>班級：<span class="fill-blank" style="min-width: 80px;"></span></div>
+          <div>座號：<span class="fill-blank" style="min-width: 60px;"></span></div>
+          <div>姓名：<span class="fill-blank" style="min-width: 110px;"></span></div>
+        </div>
+      </div>
+
+      <!-- 三、隨堂實作：【類題 4】反求立柱高度 (課本第 133 頁第 4 題) -->
+      <div class="border-2 border-slate-900 p-2.5 rounded-lg bg-white mb-2.5 shadow-2xs">
+        <div class="font-black text-xs text-slate-950 pb-1 border-b border-slate-300 flex justify-between items-baseline mb-2">
+          <span>三、隨堂實作：【類題 4】反求立柱高度（課本第 133 頁第 4 題）</span>
+          <span class="text-xs font-bold text-slate-700">學生自主實作</span>
+        </div>
+
+        <!-- 題目＋步驟一二在左，大立體圖在右 -->
+        <div class="flex gap-4 items-center mb-2">
+          <div class="flex-1 flex flex-col gap-2">
+            <p class="text-xs leading-relaxed text-slate-950 font-medium">
+              <strong>【題目】</strong>如圖，設直線 $OA \perp$ 平面 $E$ 於 $A$ 點，平面 $E$ 上有一條直線 $L$。從垂足 $A$ 點向直線 $L$ 作垂線，垂足為 $B$，並在直線 $L$ 上取一點 $C$。若已知 $\overline{AB} = 4$，$\overline{BC} = 12$，空間斜線 $\overline{OC} = 13$，試反求立柱高度 $\overline{OA}$。
+            </p>
+
+            <div class="p-1.5 bg-slate-50 border border-slate-300 rounded text-xs flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-950">【步驟一：猜猜哪個是直角】</span>
+                <span class="ml-1 text-slate-800">猜猜看空間中哪一個角是直角？</span>
+              </div>
+              <div class="font-bold whitespace-nowrap">
+                $\angle$ <span class="fill-blank" style="min-width: 45px;"><span class="ans-text">OBC</span></span> $= 90^\circ$
+              </div>
+            </div>
+
+            <div class="p-2 bg-slate-50 border border-slate-300 rounded text-xs text-slate-900 leading-relaxed">
+              <span class="font-bold text-slate-950">【步驟二：三垂線定理】</span>
+              因為 $\overline{OA} \perp E$ 且 $\overline{AB} \perp L \implies$ 空間斜線 <span class="fill-blank" style="min-width: 45px;"><span class="ans-text">$\overline{OB}$</span></span> $\perp$ 直線 $L$。
+            </div>
+          </div>
+
+          <!-- 類題 4 空間幾何圖 -->
+          <div class="w-[260px] flex-shrink-0 text-center bg-slate-50/70 p-1.5 rounded-lg border border-slate-300">
+            <svg viewBox="0 0 230 155" class="w-full h-auto mx-auto" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="5.2,127.8 136.8,127.8 185.3,80.9 53.7,80.9" fill="#ffffff" stroke="#000000" stroke-width="1.35"/>
+              <text x="152.0" y="93.6" class="svg-math" font-size="13.5">E</text>
+              <line x1="68.2" y1="121.2" x2="144.9" y2="86.9" stroke="#000000" stroke-width="1.7" stroke-linecap="round"/>
+              <text x="55.2" y="124.2" class="svg-math" font-size="13">L</text>
+              <polygon points="53.9,102.5 53.9,94.8 59.3,96.2 59.3,103.9" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <polygon points="89.2,111.8 83.8,110.4 77.4,113.3 82.8,114.7" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <line x1="53.9" y1="102.5" x2="89.2" y2="111.8" stroke="#000000" stroke-width="1.9" stroke-linecap="round"/>
+              <line x1="53.9" y1="54.1" x2="89.2" y2="111.8" stroke="#000000" stroke-width="1.9" stroke-linecap="round"/>
+              <line x1="89.2" y1="111.8" x2="137.4" y2="90.3" stroke="#000000" stroke-width="2.2" stroke-linecap="round"/>
+              <line x1="53.9" y1="54.1" x2="137.4" y2="90.3" stroke="#000000" stroke-width="2.0" stroke-linecap="round"/>
+              <line x1="53.9" y1="54.1" x2="53.9" y2="102.5" stroke="#000000" stroke-width="2.4" stroke-dasharray="4,3" stroke-linecap="round"/>
+              <circle cx="53.9" cy="54.1" r="2.7" fill="#000000"/>
+              <circle cx="53.9" cy="102.5" r="2.7" fill="#000000"/>
+              <circle cx="89.2" cy="111.8" r="2.7" fill="#000000"/>
+              <circle cx="137.4" cy="90.3" r="2.7" fill="#000000"/>
+              <text x="39.9" y="52.1" class="svg-math" font-size="14">O</text>
+              <text x="38.9" y="108.5" class="svg-math" font-size="14">A</text>
+              <text x="95.2" y="124.8" class="svg-math" font-size="14">B</text>
+              <text x="143.4" y="102.3" class="svg-math" font-size="14">C</text>
+              <text x="40.9" y="82.3" class="svg-num" font-size="13">?</text>
+              <text x="69.2" y="101.3" class="svg-num" font-size="12">4</text>
+              <text x="122.3" y="114.1" class="svg-num" font-size="12">12</text>
+              <text x="95.6" y="64.2" class="svg-num" font-size="12">13</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 步驟三：抽離直角三角形自主計算 -->
+        <span class="font-bold text-xs text-slate-950 block mb-1">【步驟三：抽離平面直角三角形，畢氏定理自主計算邊長】</span>
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <!-- 三角形 1: 斜面直角三角形 OBC -->
+          <div class="calc-box p-2.5 flex flex-col justify-between min-h-[190px]">
+            <div>
+              <div class="flex items-center justify-between pb-1 mb-1.5 border-b border-slate-300">
+                <span class="font-bold text-slate-950 text-xs">① 在直角 $\triangle OBC$ 中（求股長 $\overline{OB}$）</span>
+                <span class="text-[11px] text-slate-800 font-bold whitespace-nowrap">斜面直角</span>
+              </div>
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <div class="flex-1">
+                  <div class="space-y-3 text-xs">
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">$\overline{OB} = \sqrt{13^2 - 12^2} = \sqrt{169 - 144} = 5$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 flex items-center px-1"></div>
+                  </div>
+                </div>
+                <div class="w-[124px] flex-shrink-0 text-center bg-slate-50 p-1 rounded border border-slate-300">
+                  <svg viewBox="0 0 132 90" class="w-[130px] h-[90px] mx-auto" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="59" width="9" height="9" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+                  <polygon points="34,18 34,68 106,68" fill="none" stroke="#000000" stroke-width="2.0" stroke-linejoin="round"/>
+                  <circle cx="34" cy="18" r="2.3" fill="#000000"/>
+                  <circle cx="34" cy="68" r="2.3" fill="#000000"/>
+                  <circle cx="106" cy="68" r="2.3" fill="#000000"/>
+                  <text x="23" y="18" class="svg-math" font-size="13">O</text>
+                  <text x="21" y="75" class="svg-math" font-size="13">B</text>
+                  <text x="111" y="75" class="svg-math" font-size="13">C</text>
+                  <text x="27" y="47" text-anchor="end" class="svg-num ans-hide" font-size="12">?</text><text x="27" y="47" text-anchor="end" class="svg-num ans-show" font-size="12">5</text>
+                  <text x="70" y="83" text-anchor="middle" class="svg-num" font-size="12">12</text>
+                  <text x="75" y="36" class="svg-num" font-size="12">13</text>
+                </svg>
+                </div>
+              </div>
+            </div>
+            <div class="pt-1 border-t border-slate-300 text-right font-bold text-xs">
+              求得中間邊：$\overline{OB} = $ <span class="fill-blank" style="min-width: 55px;"><span class="ans-text">5</span></span>
+            </div>
+          </div>
+
+          <!-- 三角形 2: 立面直角三角形 OAB -->
+          <div class="calc-box p-2.5 flex flex-col justify-between min-h-[190px]">
+            <div>
+              <div class="flex items-center justify-between pb-1 mb-1.5 border-b border-slate-300">
+                <span class="font-bold text-slate-950 text-xs">② 在直角 $\triangle OAB$ 中（求立柱高 $\overline{OA}$）</span>
+                <span class="text-[11px] text-slate-800 font-bold whitespace-nowrap">立面直角</span>
+              </div>
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <div class="flex-1">
+                  <div class="space-y-3 text-xs">
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">$\overline{OA} = \sqrt{5^2 - 4^2} = \sqrt{25 - 16} = 3$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 flex items-center px-1"></div>
+                  </div>
+                </div>
+                <div class="w-[124px] flex-shrink-0 text-center bg-slate-50 p-1 rounded border border-slate-300">
+                  <svg viewBox="0 0 132 90" class="w-[130px] h-[90px] mx-auto" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="59" width="9" height="9" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+                  <polygon points="34,18 34,68 106,68" fill="none" stroke="#000000" stroke-width="2.0" stroke-linejoin="round"/>
+                  <circle cx="34" cy="18" r="2.3" fill="#000000"/>
+                  <circle cx="34" cy="68" r="2.3" fill="#000000"/>
+                  <circle cx="106" cy="68" r="2.3" fill="#000000"/>
+                  <text x="23" y="18" class="svg-math" font-size="13">O</text>
+                  <text x="21" y="75" class="svg-math" font-size="13">A</text>
+                  <text x="111" y="75" class="svg-math" font-size="13">B</text>
+                  <text x="27" y="47" text-anchor="end" class="svg-num ans-hide" font-size="12">?</text><text x="27" y="47" text-anchor="end" class="svg-num ans-show" font-size="12">3</text>
+                  <text x="70" y="83" text-anchor="middle" class="svg-num" font-size="12">4</text>
+                  <text x="75" y="36" class="svg-num ans-hide" font-size="12">?</text><text x="75" y="36" class="svg-num ans-show" font-size="12">5</text>
+                </svg>
+                </div>
+              </div>
+            </div>
+            <div class="pt-1 border-t border-slate-300 text-right font-bold text-xs">
+              求得立柱高度：$\overline{OA} = $ <span class="fill-blank" style="min-width: 55px;"><span class="ans-text">3</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-1.5 text-right text-xs font-black text-slate-950">
+          【本題課本解答】：立柱長度 $\overline{OA} = $ <span class="fill-blank" style="min-width: 65px;"><span class="ans-text">3</span></span>
+        </div>
+      </div>
+
+      <!-- 四、生活素養應用：【例 5】平台型鋼琴頂蓋支撐桿 (課本第 134 頁) -->
+      <div class="border-2 border-slate-900 p-2.5 rounded-lg bg-white shadow-2xs">
+        <div class="font-black text-xs text-slate-950 pb-1 border-b border-slate-300 flex justify-between items-baseline mb-2">
+          <span>四、生活素養應用：【例 5】平台型鋼琴頂蓋支撐桿（課本第 134 頁）</span>
+          <span class="text-xs font-bold text-slate-700">生活情境數學建模</span>
+        </div>
+
+        <div class="flex gap-4 items-center mb-2">
+          <div class="flex-1 flex flex-col gap-2">
+            <p class="text-xs leading-relaxed text-slate-950 font-medium">
+              <strong>【題目】</strong>如圖是一架平台型鋼琴的抽象幾何模型，$\overline{AB}$ 為支撐架，掀開頂蓋時 $\overline{AB}$ 垂直頂蓋平面於 $B$ 點，而位於頂蓋邊緣的 $C$、$D$ 兩點為鋼琴鉸鍊的鎖孔。已知 $\overline{BC} \perp \overline{CD}$，且 $\overline{AB} = 4$，$\overline{BC} = 4$，$\overline{CD} = 2$，試求空間距離 $\overline{AD}$。
+            </p>
+
+            <div class="p-1.5 bg-slate-50 border border-slate-300 rounded text-xs flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-950">【步驟一：猜猜哪個是直角】</span>
+                <span class="ml-1 text-slate-800">猜猜看空間中哪一個角是直角？</span>
+              </div>
+              <div class="font-bold whitespace-nowrap">
+                $\angle$ <span class="fill-blank" style="min-width: 45px;"><span class="ans-text">ACD</span></span> $= 90^\circ$
+              </div>
+            </div>
+
+            <div class="p-2 bg-slate-50 border border-slate-300 rounded text-xs text-slate-900 leading-relaxed">
+              <span class="font-bold text-slate-950">【步驟二：三垂線定理】</span>
+              因為 $\overline{AB} \perp$ 頂蓋平面且 $\overline{BC} \perp \overline{CD} \implies \overline{AC} \perp$ <span class="fill-blank" style="min-width: 45px;"><span class="ans-text">$\overline{CD}$</span></span>。
+            </div>
+          </div>
+
+          <!-- 例 5 抽象掀蓋雙平面模型 -->
+          <div class="w-[260px] flex-shrink-0 text-center bg-slate-50/70 p-1.5 rounded-lg border border-slate-300">
+            <svg viewBox="0 0 245 155" class="w-full h-auto mx-auto" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="60.0,77.5 176.2,63.0 230.9,104.8 114.7,119.3" fill="#ffffff" stroke="#475569" stroke-width="1.1" stroke-dasharray="4,2"/>
+              <polyline points="60.0,77.5 176.2,63.0 230.9,104.8 114.7,119.3" fill="none" stroke="#000000" stroke-width="1.2"/>
+              <polygon points="60.0,77.5 110.6,19.2 165.3,61.0 114.7,119.3" fill="#f8fafc" fill-opacity="0.93" stroke="#000000" stroke-width="1.45"/>
+              <line x1="58.8" y1="76.6" x2="115.8" y2="120.2" stroke="#000000" stroke-width="1.75"/>
+              <line x1="162.7" y1="87.3" x2="85.4" y2="96.9" stroke="#000000" stroke-width="1.6" stroke-dasharray="4,3"/>
+              <line x1="162.7" y1="87.3" x2="99.2" y2="107.5" stroke="#000000" stroke-width="2.2" stroke-dasharray="5,3"/>
+              <polygon points="124.1,52.4 129.5,57.3 124.1,63.5 118.6,58.7" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <polygon points="85.4,96.9 90.8,90.7 93.9,93.1 88.5,99.3" fill="#ffffff" stroke="#000000" stroke-width="1.15"/>
+              <line x1="124.1" y1="52.4" x2="85.4" y2="96.9" stroke="#000000" stroke-width="2.1" stroke-linecap="round"/>
+              <line x1="85.4" y1="96.9" x2="99.2" y2="107.5" stroke="#000000" stroke-width="2.6" stroke-linecap="round"/>
+              <line x1="162.7" y1="87.3" x2="124.1" y2="52.4" stroke="#000000" stroke-width="2.2" stroke-linecap="round"/>
+              <text x="99.1" y="54.1" text-anchor="middle" font-size="8.0" font-weight="bold" fill="#000000">頂蓋平面</text>
+              <text x="201.0" y="102.7" text-anchor="middle" font-size="8.2" font-weight="bold" fill="#1e293b">琴身平面</text>
+              <circle cx="162.7" cy="87.3" r="2.7" fill="#000000"/>
+              <circle cx="124.1" cy="52.4" r="2.7" fill="#000000"/>
+              <circle cx="85.4" cy="96.9" r="2.7" fill="#000000"/>
+              <circle cx="99.2" cy="107.5" r="2.7" fill="#000000"/>
+              <text x="169.7" y="91.3" class="svg-math" font-size="14">A</text>
+              <text x="122.1" y="45.4" class="svg-math" font-size="14">B</text>
+              <text x="71.4" y="102.9" class="svg-math" font-size="14">C</text>
+              <text x="90.2" y="120.5" class="svg-math" font-size="14">D</text>
+              <text x="148.0" y="61.0" class="svg-num" font-size="12.5">4</text>
+              <text x="110.7" y="84.7" class="svg-num" font-size="12.5">4</text>
+              <text x="79.3" y="112.2" class="svg-num" font-size="12.5">2</text>
+              <text x="144.1" y="106.1" class="svg-num" font-size="13">?</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 步驟三：自主計算大框 -->
+        <span class="font-bold text-xs text-slate-950 block mb-1">【步驟三：抽離直角三角形，兩次畢氏定理自主計算】</span>
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <!-- 第一階段 -->
+          <div class="calc-box p-2.5 flex flex-col justify-between min-h-[190px]">
+            <div>
+              <div class="flex items-center justify-between pb-1 mb-1.5 border-b border-slate-300">
+                <span class="font-bold text-slate-950 text-xs">① 在直角 $\triangle ABC$ 中（求過渡邊 $\overline{AC}$）</span>
+                <span class="text-[11px] text-slate-800 font-bold whitespace-nowrap">$\angle B = 90^\circ$</span>
+              </div>
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <div class="flex-1">
+                  <div class="space-y-3 text-xs">
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">$\overline{AC} = \sqrt{4^2 + 4^2} = \sqrt{32} = 4\sqrt{2}$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 flex items-center px-1"></div>
+                  </div>
+                </div>
+                <div class="w-[124px] flex-shrink-0 text-center bg-slate-50 p-1 rounded border border-slate-300">
+                  <svg viewBox="0 0 132 90" class="w-[130px] h-[90px] mx-auto" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="59" width="9" height="9" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+                  <polygon points="34,18 34,68 106,68" fill="none" stroke="#000000" stroke-width="2.0" stroke-linejoin="round"/>
+                  <circle cx="34" cy="18" r="2.3" fill="#000000"/>
+                  <circle cx="34" cy="68" r="2.3" fill="#000000"/>
+                  <circle cx="106" cy="68" r="2.3" fill="#000000"/>
+                  <text x="23" y="18" class="svg-math" font-size="13">A</text>
+                  <text x="21" y="75" class="svg-math" font-size="13">B</text>
+                  <text x="111" y="75" class="svg-math" font-size="13">C</text>
+                  <text x="27" y="47" text-anchor="end" class="svg-num" font-size="12">4</text>
+                  <text x="70" y="83" text-anchor="middle" class="svg-num" font-size="12">4</text>
+                  <text x="75" y="36" class="svg-num ans-hide" font-size="12">?</text><text x="75" y="36" class="svg-num ans-show" font-size="12">4√2</text>
+                </svg>
+                </div>
+              </div>
+            </div>
+            <div class="pt-1 border-t border-slate-300 text-right font-bold text-xs">
+              求得過渡邊：$\overline{AC} = $ <span class="fill-blank" style="min-width: 55px;"><span class="ans-text">$4\sqrt{2}$</span></span>
+            </div>
+          </div>
+
+          <!-- 第二階段 -->
+          <div class="calc-box p-2.5 flex flex-col justify-between min-h-[190px]">
+            <div>
+              <div class="flex items-center justify-between pb-1 mb-1.5 border-b border-slate-300">
+                <span class="font-bold text-slate-950 text-xs">② 在直角 $\triangle ACD$ 中（求目標邊 $\overline{AD}$）</span>
+                <span class="text-[11px] text-slate-800 font-bold whitespace-nowrap">$\angle C = 90^\circ$</span>
+              </div>
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <div class="flex-1">
+                  <div class="space-y-3 text-xs">
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1">
+                      <span class="ans-text">$\overline{AD} = \sqrt{(4\sqrt{2})^2 + 2^2} = \sqrt{32 + 4} = 6$</span>
+                    </div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 border-b border-dashed border-slate-300 flex items-center px-1"></div>
+                    <div class="h-6 flex items-center px-1"></div>
+                  </div>
+                </div>
+                <div class="w-[124px] flex-shrink-0 text-center bg-slate-50 p-1 rounded border border-slate-300">
+                  <svg viewBox="0 0 132 90" class="w-[130px] h-[90px] mx-auto" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="59" width="9" height="9" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+                  <polygon points="34,18 34,68 106,68" fill="none" stroke="#000000" stroke-width="2.0" stroke-linejoin="round"/>
+                  <circle cx="34" cy="18" r="2.3" fill="#000000"/>
+                  <circle cx="34" cy="68" r="2.3" fill="#000000"/>
+                  <circle cx="106" cy="68" r="2.3" fill="#000000"/>
+                  <text x="23" y="18" class="svg-math" font-size="13">A</text>
+                  <text x="21" y="75" class="svg-math" font-size="13">C</text>
+                  <text x="111" y="75" class="svg-math" font-size="13">D</text>
+                  <text x="27" y="47" text-anchor="end" class="svg-num ans-hide" font-size="12">?</text><text x="27" y="47" text-anchor="end" class="svg-num ans-show" font-size="12">4√2</text>
+                  <text x="70" y="83" text-anchor="middle" class="svg-num" font-size="12">2</text>
+                  <text x="75" y="36" class="svg-num ans-hide" font-size="12">?</text><text x="75" y="36" class="svg-num ans-show" font-size="12">6</text>
+                </svg>
+                </div>
+              </div>
+            </div>
+            <div class="pt-1 border-t border-slate-300 text-right font-bold text-xs">
+              求得目標邊：$\overline{AD} = $ <span class="fill-blank" style="min-width: 55px;"><span class="ans-text">6</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-1.5 text-right text-xs font-black text-slate-950">
+          【本題課本解答】：空間長度 $\overline{AD} = $ <span class="fill-blank" style="min-width: 65px;"><span class="ans-text">6</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let showAnswers = false;
+    function toggleAnswerMode() {
+      showAnswers = !showAnswers;
+      const btn = document.getElementById('toggleAnsBtn');
+      if (showAnswers) {
+        document.body.classList.add('show-answers');
+        btn.innerText = '切換：隱藏教師解答（學生空白版）';
+        btn.classList.add('bg-slate-700');
+        btn.classList.remove('bg-slate-900');
+      } else {
+        document.body.classList.remove('show-answers');
+        btn.innerText = '切換：顯示教師解答';
+        btn.classList.remove('bg-slate-700');
+        btn.classList.add('bg-slate-900');
+      }
+    }
+  </script>
+</body>
+</html>

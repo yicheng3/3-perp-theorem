@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*~
+*.swp
+
+# Local logs
+*.log
